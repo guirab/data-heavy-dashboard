@@ -33,10 +33,23 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # Raw zips are cached across runs and saved even when the download step fails,
+      # so a portal throttle (it answers bursts with HTTP 405) costs a retry, not a
+      # restart from zero. Cached files are verified against the manifest's SHA-256.
       - name: Restore raw source files
-        uses: actions/cache@v4
+        id: raw-cache
+        uses: actions/cache/restore@v4
         with:
           path: data/raw
-          key: raw-${{ hashFiles('data/manifest.json') }}
+          key: raw-${{ hashFiles('data/manifest.json') }}-${{ github.run_id }}
+          restore-keys: |
+            raw-${{ hashFiles('data/manifest.json') }}-
+            raw-
       - run: pnpm data:download
+      - name: Save raw source files
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/raw
+          key: raw-${{ hashFiles('data/manifest.json') }}-${{ github.run_id }}
       - run: pnpm data:verify

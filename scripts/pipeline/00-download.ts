@@ -30,11 +30,13 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
  * The portal occasionally answers a burst of downloads with 405/429/5xx (observed
  * on a GitHub runner after 28 files). Back off and retry instead of failing the run.
  */
-async function fetchWithRetry(url: string, label: string, attempts = 4): Promise<{ buf: Buffer; lastModified: string | null }> {
+const BACKOFF_MS = [10_000, 30_000, 60_000, 120_000]
+
+async function fetchWithRetry(url: string, label: string, attempts = BACKOFF_MS.length + 1): Promise<{ buf: Buffer; lastModified: string | null }> {
   let lastError: Error | null = null
   for (let i = 0; i < attempts; i++) {
     if (i > 0) {
-      const wait = 5_000 * 3 ** (i - 1)
+      const wait = BACKOFF_MS[i - 1]
       console.log(`  ${label}  retry ${i}/${attempts - 1} in ${wait / 1000}s (${lastError?.message})`)
       await sleep(wait)
     }
@@ -65,8 +67,12 @@ async function fetchMonth(year: number, month: number, manifest: SourceManifest)
   const file = rawZipPath(year, month)
   const existing = manifest.files.find((f) => f.period === p)
   if (existing && fs.existsSync(file) && fs.statSync(file).size === existing.bytes) {
-    console.log(`  ${p}  cached  ${existing.bytes.toLocaleString()} bytes`)
-    return
+    // A cached file must be the file the manifest describes, not merely the same size.
+    if (sha256(fs.readFileSync(file)) === existing.sha256) {
+      console.log(`  ${p}  cached  ${existing.bytes.toLocaleString()} bytes`)
+      return
+    }
+    console.log(`  ${p}  cached file does not match manifest sha256; re-downloading`)
   }
   // A zip already on disk (e.g. copied from another checkout) is registered
   // without re-downloading when its size matches what the portal reports.
@@ -102,8 +108,8 @@ async function fetchMonth(year: number, month: number, manifest: SourceManifest)
   manifest.files = manifest.files.filter((f) => f.period !== p).concat(entry)
   writeManifest(manifest)
   console.log(`  ${p}  fetched ${buf.length.toLocaleString()} bytes  (${entry.sourceLastModified ?? 'no Last-Modified'})`)
-  // Be polite to the portal between consecutive downloads.
-  await sleep(1_000)
+  // Be polite to the portal between consecutive downloads (it blocks bursts with 405).
+  await sleep(3_000)
 }
 
 async function main() {
