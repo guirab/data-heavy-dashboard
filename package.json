@@ -16,7 +16,10 @@
     "data:build": "node scripts/pipeline/index.ts",
     "data:verify": "node scripts/pipeline/verify.ts",
     "readme:defects": "node scripts/readme/defects-table.ts",
-    "perf:measure": "node scripts/perf/measure.ts"
+    "perf:measure": "node scripts/perf/measure.ts",
+    "readme:perf": "node scripts/readme/perf-table.ts",
+    "perf:bench": "node scripts/perf/engine-bench.ts",
+    "perf:chart": "node scripts/perf/chart-stress.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -120,7 +120,7 @@ async function measureMode(mode: Mode): Promise<{ samples: Sample[]; loadMs: num
 
 function render(results: Array<{ mode: Mode; samples: Sample[]; loadMs: number[]; heap: number[]; failed: string | null }>) {
   const lines: string[] = []
-  lines.push(`Measured ${new Date().toISOString().slice(0, 10)} on ${os.cpus()[0]?.model.trim() ?? 'unknown CPU'}, ${Math.round(os.totalmem() / 1e9)} GB RAM, headless Chromium ${chromium.name()} via Playwright, production build served locally (\`next start\`). ${RUNS} runs per cell; values are medians of interaction → next painted frame, in ms. Engine = filter+sort time alone (worker or main thread).`)
+  lines.push(`Measured ${new Date().toISOString().slice(0, 10)} on ${os.cpus()[0]?.model.trim() ?? 'unknown CPU'}, ${Math.round(os.totalmem() / 1e9)} GB RAM, headless Chromium via Playwright, production build served locally (\`next start\`). ${RUNS} runs per cell; values are medians of interaction → next painted frame, in ms. Engine = filter+sort time alone (worker or main thread).`)
   lines.push('')
   lines.push(`| Mode | Load → first rows | JS heap after load | ${STEPS.map((s) => s.name).join(' | ')} |`)
   lines.push(`| --- | --- | --- | ${STEPS.map(() => '---').join(' | ')} |`)
