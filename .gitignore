@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# playwright
+/test-results/
+/playwright-report/
+
+# AI agent instruction files (local only)
+CLAUDE.md
+AGENTS.md
