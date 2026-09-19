@@ -24,6 +24,30 @@ export interface SourceManifest {
 }
 
 const sha256 = (buf: Buffer) => createHash('sha256').update(buf).digest('hex')
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+/**
+ * The portal occasionally answers a burst of downloads with 405/429/5xx (observed
+ * on a GitHub runner after 28 files). Back off and retry instead of failing the run.
+ */
+async function fetchWithRetry(url: string, label: string, attempts = 4): Promise<{ buf: Buffer; lastModified: string | null }> {
+  let lastError: Error | null = null
+  for (let i = 0; i < attempts; i++) {
+    if (i > 0) {
+      const wait = 5_000 * 3 ** (i - 1)
+      console.log(`  ${label}  retry ${i}/${attempts - 1} in ${wait / 1000}s (${lastError?.message})`)
+      await sleep(wait)
+    }
+    try {
+      const res = await fetch(url, { headers: { 'User-Agent': SOURCE.userAgent }, redirect: 'follow' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      return { buf: Buffer.from(await res.arrayBuffer()), lastModified: res.headers.get('last-modified') }
+    } catch (e) {
+      lastError = e instanceof Error ? e : new Error(String(e))
+    }
+  }
+  throw new Error(`${label}: ${lastError?.message} from ${url} after ${attempts} attempts`)
+}
 
 export function readManifest(): SourceManifest {
   if (!fs.existsSync(MANIFEST_PATH)) return { source: SOURCE.name, publisher: SOURCE.publisher, page: SOURCE.page, files: [] }
@@ -64,9 +88,7 @@ async function fetchMonth(year: number, month: number, manifest: SourceManifest)
       return
     }
   }
-  const res = await fetch(url, { headers: { 'User-Agent': SOURCE.userAgent }, redirect: 'follow' })
-  if (!res.ok) throw new Error(`${p}: HTTP ${res.status} from ${url}`)
-  const buf = Buffer.from(await res.arrayBuffer())
+  const { buf, lastModified } = await fetchWithRetry(url, p)
   if (buf.length < 1000 || buf[0] !== 0x50 || buf[1] !== 0x4b) throw new Error(`${p}: response is not a zip (${buf.length} bytes)`)
   fs.writeFileSync(file, buf)
   const entry: ManifestEntry = {
@@ -75,11 +97,13 @@ async function fetchMonth(year: number, month: number, manifest: SourceManifest)
     file: `data/raw/${file.split('/').pop()}`,
     bytes: buf.length,
     sha256: sha256(buf),
-    sourceLastModified: res.headers.get('last-modified'),
+    sourceLastModified: lastModified,
   }
   manifest.files = manifest.files.filter((f) => f.period !== p).concat(entry)
   writeManifest(manifest)
   console.log(`  ${p}  fetched ${buf.length.toLocaleString()} bytes  (${entry.sourceLastModified ?? 'no Last-Modified'})`)
+  // Be polite to the portal between consecutive downloads.
+  await sleep(1_000)
 }
 
 async function main() {
