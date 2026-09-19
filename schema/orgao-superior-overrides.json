@@ -1,0 +1,13 @@
+{
+  "$comment": "The only hand-curated data in the repo. Source names are truncated upstream at 45 UTF-8 bytes (DEF-10); these are the full official names, keyed by Código Órgão Superior. An entry equal to the source name means 'verified complete' (it happens to be exactly 45 bytes). Add an entry only when the truncated name is unambiguous.",
+  "24000": "Ministério da Ciência, Tecnologia e Inovação",
+  "25201": "Banco Central do Brasil - Orçamento Fiscal e da Seguridade Social",
+  "28000": "Ministério do Desenvolvimento, Indústria, Comércio e Serviços",
+  "30000": "Ministério da Justiça e Segurança Pública",
+  "44000": "Ministério do Meio Ambiente e Mudança do Clima",
+  "46000": "Ministério da Gestão e da Inovação em Serviços Públicos",
+  "49000": "Ministério do Desenvolvimento Agrário e Agricultura Familiar",
+  "53000": "Ministério da Integração e do Desenvolvimento Regional",
+  "55000": "Ministério do Desenvolvimento e Assistência Social, Família e Combate à Fome",
+  "69000": "Ministério do Empreendedorismo, da Microempresa e da Empresa de Pequeno Porte"
+}

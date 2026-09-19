@@ -1,0 +1,138 @@
+{
+  "columnar": {
+    "byteLength": 21008848,
+    "columns": [
+      {
+        "length": 328263,
+        "name": "month",
+        "offset": 0,
+        "type": "u8"
+      },
+      {
+        "length": 328263,
+        "name": "orgSup",
+        "offset": 328264,
+        "type": "u8"
+      },
+      {
+        "length": 328263,
+        "name": "orgSub",
+        "offset": 656528,
+        "type": "u16"
+      },
+      {
+        "length": 328263,
+        "name": "funcao",
+        "offset": 1313056,
+        "type": "u8"
+      },
+      {
+        "length": 328263,
+        "name": "subfuncao",
+        "offset": 1641320,
+        "type": "u8"
+      },
+      {
+        "length": 328263,
+        "name": "programa",
+        "offset": 1969584,
+        "type": "u16"
+      },
+      {
+        "length": 328263,
+        "name": "acao",
+        "offset": 2626112,
+        "type": "u16"
+      },
+      {
+        "length": 328263,
+        "name": "po",
+        "offset": 3282640,
+        "type": "u16"
+      },
+      {
+        "length": 328263,
+        "name": "grupo",
+        "offset": 3939168,
+        "type": "u8"
+      },
+      {
+        "length": 328263,
+        "name": "elemento",
+        "offset": 4267432,
+        "type": "u8"
+      },
+      {
+        "length": 328263,
+        "name": "modalidade",
+        "offset": 4595696,
+        "type": "u8"
+      },
+      {
+        "length": 328263,
+        "name": "uf",
+        "offset": 4923960,
+        "type": "u8"
+      },
+      {
+        "length": 328263,
+        "name": "empenhado",
+        "offset": 5252224,
+        "type": "f64"
+      },
+      {
+        "length": 328263,
+        "name": "liquidado",
+        "offset": 7878328,
+        "type": "f64"
+      },
+      {
+        "length": 328263,
+        "name": "pago",
+        "offset": 10504432,
+        "type": "f64"
+      },
+      {
+        "length": 328263,
+        "name": "rpInscritos",
+        "offset": 13130536,
+        "type": "f64"
+      },
+      {
+        "length": 328263,
+        "name": "rpCancelado",
+        "offset": 15756640,
+        "type": "f64"
+      },
+      {
+        "length": 328263,
+        "name": "rpPagos",
+        "offset": 18382744,
+        "type": "f64"
+      }
+    ],
+    "format": "columnar-v1",
+    "rows": 328263
+  },
+  "columnsGzipBytes": 3538373,
+  "columnsSha256": "69137dac5b689f11685074c95ae8c340f7311004c657bdec46c01ae821c58abb",
+  "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "partial": false,
+  "rawRows": 789883,
+  "rows": 328263,
+  "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT",
+  "year": 2025
+}

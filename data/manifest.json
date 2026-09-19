@@ -1,0 +1,271 @@
+{
+  "source": "Portal da Transparência — Execução da Despesa",
+  "publisher": "Controladoria-Geral da União (CGU)",
+  "page": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao",
+  "files": [
+    {
+      "period": "202401",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202401",
+      "file": "data/raw/despesas-execucao_202401.zip",
+      "bytes": 4908188,
+      "sha256": "a8ac202af296b5527d296afe1ae4c3bf7ad3604955eac23848b72797e11306c1",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202402",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202402",
+      "file": "data/raw/despesas-execucao_202402.zip",
+      "bytes": 5935503,
+      "sha256": "217b801c15735f554a6d22a708ea3f029a791dc61d67476c2bf0e52d2e1e8aeb",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202403",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202403",
+      "file": "data/raw/despesas-execucao_202403.zip",
+      "bytes": 6977433,
+      "sha256": "7e76c3b6ee448574f3d648f905d4a792be99dc073d598a1ca426faa4193c9452",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202404",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202404",
+      "file": "data/raw/despesas-execucao_202404.zip",
+      "bytes": 7352937,
+      "sha256": "cb7f5e9f74fa3821883dbc4c54164083a81da9e8a0d613e56082062ff08c2905",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202405",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202405",
+      "file": "data/raw/despesas-execucao_202405.zip",
+      "bytes": 7556959,
+      "sha256": "3ab6bcb33498dc780de19d684b570d8e5f3e5af6dad83948e4a1b5edb858b699",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202406",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202406",
+      "file": "data/raw/despesas-execucao_202406.zip",
+      "bytes": 7650164,
+      "sha256": "21a0f19c38e8d4fa1201284b0c5c45670a2a5462646768866d8079b29fedb16c",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202407",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202407",
+      "file": "data/raw/despesas-execucao_202407.zip",
+      "bytes": 7886509,
+      "sha256": "d0bdd4d89c3bc6eb3c57109564aba5325fdbe7e1f3f1d23f7424e3d2afc63ad3",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202408",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202408",
+      "file": "data/raw/despesas-execucao_202408.zip",
+      "bytes": 7240944,
+      "sha256": "986851bb1e2a6e08010b7611eb49f3657b327178a678703635f447cad41c5266",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202409",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202409",
+      "file": "data/raw/despesas-execucao_202409.zip",
+      "bytes": 7193208,
+      "sha256": "1cc6d3cbf2ff0c257e315d366add72640f502f1dc2c00e6f14c71fb6bf79da00",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202410",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202410",
+      "file": "data/raw/despesas-execucao_202410.zip",
+      "bytes": 7703223,
+      "sha256": "b1b3059d8f6a0bfce4542e61ddfec25bcf1353f955f75358eaafecc0a876839f",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202411",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202411",
+      "file": "data/raw/despesas-execucao_202411.zip",
+      "bytes": 7772544,
+      "sha256": "0829bb1e4964ec154a2e721ee4d530329c91209df930d1b7526c5b1f2c41e52f",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202412",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202412",
+      "file": "data/raw/despesas-execucao_202412.zip",
+      "bytes": 11121768,
+      "sha256": "85f45e7f14682468b14dff682a1354601595d10ca9d660fa32764abcfa74a7c1",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:20 GMT"
+    },
+    {
+      "period": "202501",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202501",
+      "file": "data/raw/despesas-execucao_202501.zip",
+      "bytes": 5171682,
+      "sha256": "6899a04f4400e3a0923296259f275dd0fdc367e5218870ebaefed7f91b9181fd",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202502",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202502",
+      "file": "data/raw/despesas-execucao_202502.zip",
+      "bytes": 5933338,
+      "sha256": "bcdd158a40972e9aa5e9a1b601c1f4d6c53d949befaca2bad9a70860d4dbb0c5",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202503",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202503",
+      "file": "data/raw/despesas-execucao_202503.zip",
+      "bytes": 6119027,
+      "sha256": "1cb333cb70b84560b157396e3c04bf56d1ef4b2b248a21dde4cb519575c92bc8",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202504",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202504",
+      "file": "data/raw/despesas-execucao_202504.zip",
+      "bytes": 6361682,
+      "sha256": "5af18b567f2d380ef95898c69c75ab66998a952d1baf74151a2b757f1a19c85c",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202505",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202505",
+      "file": "data/raw/despesas-execucao_202505.zip",
+      "bytes": 6631491,
+      "sha256": "70bfdd19cf9f7e695b8b5244b7283cbaf1f2f081d86ffcbd7e5984ecaf891b86",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202506",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202506",
+      "file": "data/raw/despesas-execucao_202506.zip",
+      "bytes": 6629091,
+      "sha256": "679d6f8bde02ac7556dc0c3f12bce438736b09027599593c0b2804ee33ab3d22",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202507",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202507",
+      "file": "data/raw/despesas-execucao_202507.zip",
+      "bytes": 7247715,
+      "sha256": "21f979cd272410f7f2e6d814c1aa2a6e96050890dc664dd87c6a71745ba80ecb",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202508",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202508",
+      "file": "data/raw/despesas-execucao_202508.zip",
+      "bytes": 7230039,
+      "sha256": "77e6c6ce638ca327328e8938fe0402772c41892bc6d4a3154d0fa2701edc2ea1",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202509",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202509",
+      "file": "data/raw/despesas-execucao_202509.zip",
+      "bytes": 7620766,
+      "sha256": "517e048e3f5547ca5d8b2df67875e825ccb9142340f323bb8b10a0d6ab6d3a98",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202510",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202510",
+      "file": "data/raw/despesas-execucao_202510.zip",
+      "bytes": 7838033,
+      "sha256": "c1b1de1b1be594dc99e4ffed680e80780d6d3464010f54f4ab7757bc3e5253de",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202511",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202511",
+      "file": "data/raw/despesas-execucao_202511.zip",
+      "bytes": 8133552,
+      "sha256": "fcc7bf32fd4eed1a8ff0cb033e02f8f8173c07b1fe9745057436a9b215cf37aa",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202512",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202512",
+      "file": "data/raw/despesas-execucao_202512.zip",
+      "bytes": 10486563,
+      "sha256": "e5a14d8ec9509f587fef82986315a9b710ff1e656e6b236f89c75e3fb70549f0",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202601",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202601",
+      "file": "data/raw/despesas-execucao_202601.zip",
+      "bytes": 5185650,
+      "sha256": "67b6889a213eff3c733dacda454aae104e38358c058ab871469e12e9b342b8af",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202602",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202602",
+      "file": "data/raw/despesas-execucao_202602.zip",
+      "bytes": 5864685,
+      "sha256": "acfa0d410398aab3fecc5fa7bf5d85bc45c244df5f8a37a7c5ffd483c2320ea1",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:21 GMT"
+    },
+    {
+      "period": "202603",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202603",
+      "file": "data/raw/despesas-execucao_202603.zip",
+      "bytes": 6746989,
+      "sha256": "f5e7f4c39cc105fe6eca681bd5e162799bb91ce16936f751e852aba996a5abb9",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:22 GMT"
+    },
+    {
+      "period": "202604",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202604",
+      "file": "data/raw/despesas-execucao_202604.zip",
+      "bytes": 6932116,
+      "sha256": "e2b96c4435f0432fdca123f6277d07b8d72a230fd90037eaefb5630950036356",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:22 GMT"
+    },
+    {
+      "period": "202605",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202605",
+      "file": "data/raw/despesas-execucao_202605.zip",
+      "bytes": 7328048,
+      "sha256": "7f056dba16c6d4625056adf98df77153992a37d60aa4b0f8ac9ded9be59342f6",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:22 GMT"
+    },
+    {
+      "period": "202606",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202606",
+      "file": "data/raw/despesas-execucao_202606.zip",
+      "bytes": 7190637,
+      "sha256": "8dc362f0faeb02e408d6b7297497761a72a03f520dae8d6b45c4524434cd30ee",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:22 GMT"
+    },
+    {
+      "period": "202607",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202607",
+      "file": "data/raw/despesas-execucao_202607.zip",
+      "bytes": 7099186,
+      "sha256": "df90f945215e3080d54f8c5bfa18c75d3ab6ea2ca5f7239e11a0a26bd5806e0e",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:22 GMT"
+    },
+    {
+      "period": "202608",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202608",
+      "file": "data/raw/despesas-execucao_202608.zip",
+      "bytes": 7182272,
+      "sha256": "2229bd249a0abc333c63b65e679df9a315d992e2c941e2daca5a60c49ff328fa",
+      "sourceLastModified": "Thu, 17 Sep 2026 19:02:22 GMT"
+    },
+    {
+      "period": "202609",
+      "url": "https://portaldatransparencia.gov.br/download-de-dados/despesas-execucao/202609",
+      "file": "data/raw/despesas-execucao_202609.zip",
+      "bytes": 5813997,
+      "sha256": "2f61711543b6eabdb5229ca314bbe73a0c91403babcd2a514ae5aaec90f3f810",
+      "sourceLastModified": "Fri, 18 Sep 2026 22:21:18 GMT"
+    }
+  ]
+}

@@ -1,0 +1,660 @@
+{
+  "droppedRows": {
+    "2024": 1845,
+    "2025": 1768,
+    "2026": 1031
+  },
+  "inputRows": {
+    "2024": 831444,
+    "2025": 789883,
+    "2026": 550532
+  },
+  "keptRows": {
+    "2024": 829599,
+    "2025": 788115,
+    "2026": 549501
+  },
+  "rules": [
+    {
+      "action": "document",
+      "affectedRows": {
+        "2024": 831444,
+        "2025": 789883,
+        "2026": 550532
+      },
+      "columnHits": {
+        "Código Subfução": 33
+      },
+      "columns": [
+        "Código Subfução"
+      ],
+      "examples": [
+        {
+          "after": "Código Subfunção (kept as published; mapped by position)",
+          "before": "Código Subfução",
+          "column": "Código Subfução",
+          "period": "202401"
+        }
+      ],
+      "id": "DEF-01",
+      "notes": [],
+      "problem": "Column 14 is spelled \"Código Subfução\" (sic) in every file. Any consumer matching on the correct spelling silently gets nothing.",
+      "rule": "The 47 expected names, typo included, live in schema/raw-header.v1.json. Every file is asserted against it; a drift aborts the run instead of shifting columns.",
+      "title": "Header typo and unstable-looking header"
+    },
+    {
+      "action": "transform",
+      "affectedRows": {
+        "2024": 831444,
+        "2025": 789883,
+        "2026": 550532
+      },
+      "columnHits": {
+        "all columns": 33
+      },
+      "columns": [
+        "all columns"
+      ],
+      "examples": [
+        {
+          "after": "UTF-8 in memory",
+          "before": "ISO-8859-1, CRLF, delimiter \";\", 40,623,059 bytes",
+          "column": "all columns",
+          "period": "202401"
+        },
+        {
+          "after": "UTF-8 in memory",
+          "before": "ISO-8859-1, CRLF, delimiter \";\", 48,316,446 bytes",
+          "column": "all columns",
+          "period": "202402"
+        },
+        {
+          "after": "UTF-8 in memory",
+          "before": "ISO-8859-1, CRLF, delimiter \";\", 55,633,170 bytes",
+          "column": "all columns",
+          "period": "202403"
+        }
+      ],
+      "id": "DEF-02",
+      "notes": [],
+      "problem": "Files are Latin-1 (not UTF-8), use \";\" as delimiter, CRLF line endings and quote every field. Reading them as UTF-8 yields mojibake in every accented name.",
+      "rule": "Decode with TextDecoder(\"iso-8859-1\") and assert the result has no U+FFFD and no double-encoding signature (\"Ã©\"-style sequences).",
+      "title": "ISO-8859-1 encoding, CRLF, every field quoted"
+    },
+    {
+      "action": "transform",
+      "affectedRows": {
+        "2024": 831444,
+        "2025": 789883,
+        "2026": 550532
+      },
+      "columnHits": {
+        "Valor Empenhado (R$)": 2171859,
+        "Valor Liquidado (R$)": 2171859,
+        "Valor Pago (R$)": 2171859,
+        "Valor Restos a Pagar Cancelado (R$)": 2171859,
+        "Valor Restos a Pagar Inscritos (R$)": 2171859,
+        "Valor Restos a Pagar Pagos (R$)": 2171859
+      },
+      "columns": [
+        "Valor Empenhado (R$)",
+        "Valor Liquidado (R$)",
+        "Valor Pago (R$)",
+        "Valor Restos a Pagar Inscritos (R$)",
+        "Valor Restos a Pagar Cancelado (R$)",
+        "Valor Restos a Pagar Pagos (R$)"
+      ],
+      "examples": [
+        {
+          "after": "40326047",
+          "before": "403260,47",
+          "column": "Valor Empenhado (R$)",
+          "period": "202401"
+        },
+        {
+          "after": "0",
+          "before": "0,00",
+          "column": "Valor Empenhado (R$)",
+          "period": "202401"
+        },
+        {
+          "after": "509653526",
+          "before": "5096535,26",
+          "column": "Valor Empenhado (R$)",
+          "period": "202401"
+        }
+      ],
+      "id": "DEF-03",
+      "notes": [],
+      "problem": "All six value columns are strings like \"13404423,26\"; there is no thousands separator, but the decimal separator is a comma.",
+      "rule": "Parse with a strict regex into integer centavos (exact in a Float64 below 2^53). Any value that does not match the regex aborts the run instead of becoming NaN.",
+      "title": "Money stored as text with a decimal comma"
+    },
+    {
+      "action": "drop-column",
+      "affectedRows": {
+        "2024": 829599,
+        "2025": 788115,
+        "2026": 549501
+      },
+      "columnHits": {
+        "Descrição Complementar Localizador": 2167215,
+        "Nome Programa Governo": 2167215,
+        "Sigla Localizador": 2167215
+      },
+      "columns": [
+        "Nome Programa Governo",
+        "Sigla Localizador",
+        "Descrição Complementar Localizador"
+      ],
+      "examples": [
+        {
+          "after": "(column dropped)",
+          "before": "Sem informação",
+          "column": "Nome Programa Governo",
+          "period": "202401"
+        },
+        {
+          "after": "(column dropped)",
+          "before": "-1",
+          "column": "Sigla Localizador",
+          "period": "202401"
+        }
+      ],
+      "id": "DEF-04",
+      "notes": [],
+      "problem": "\"Nome Programa Governo\", \"Sigla Localizador\" and \"Descrição Complementar Localizador\" hold the same placeholder in 100% of rows: the schema promises data the export never fills.",
+      "rule": "Dropped from the served data. The rule counts rows where the placeholder holds, so a future file that starts filling the column shows up as a count below 100%.",
+      "title": "Dead columns"
+    },
+    {
+      "action": "nullify",
+      "affectedRows": {
+        "2024": 5596,
+        "2025": 15337,
+        "2026": 6033
+      },
+      "columnHits": {
+        "Código Órgão Superior": 26966
+      },
+      "columns": [
+        "Código Órgão Superior",
+        "Nome Órgão Superior",
+        "Código Órgão Subordinado",
+        "Nome Órgão Subordinado"
+      ],
+      "examples": [
+        {
+          "after": "null",
+          "before": "code=\"-1\" name=\"Sem informação\" ug=\"Inválido\"",
+          "column": "Código Órgão Superior",
+          "period": "202401"
+        },
+        {
+          "after": "null",
+          "before": "code=\"\" name=\"Sem informação\" ug=\"NAO SE APLICA\"",
+          "column": "Código Órgão Superior",
+          "period": "202506"
+        }
+      ],
+      "id": "DEF-05",
+      "notes": [
+        "variant b: code \"-1\", órgão subordinado \"-3\", unidade gestora \"Inválido\"",
+        "variant a: code \"\", órgão subordinado \"\", unidade gestora \"NAO SE APLICA\"",
+        "variant a occurs in: 202506, 202605, 202607, 202608",
+        "variant b occurs in: 202401, 202402, 202403, 202404, 202405, 202406, 202407, 202408, 202409, 202410, 202411, 202412, 202501, 202502, 202503, 202504, 202505, 202507, 202508, 202509, 202510, 202511, 202512, 202601, 202602, 202603, 202604, 202606"
+      ],
+      "problem": "Rows without an agency come in two flavours: (a) empty code + \"Sem informação\" + unidade gestora \"NAO SE APLICA\"; (b) code \"-1\" + \"Sem informação\" + órgão subordinado \"-3\" + unidade gestora \"Inválido\".",
+      "rule": "Normalize both to a null agency (and null órgão subordinado). Rows are kept in a \"no agency\" bucket that the UI excludes from rankings by default.",
+      "title": "Missing agency encoded two different ways"
+    },
+    {
+      "action": "nullify",
+      "affectedRows": {
+        "2024": 829550,
+        "2025": 788053,
+        "2026": 549494
+      },
+      "columnHits": {
+        "Código Autor Emenda": 2014531,
+        "Código Plano Orçamentário": 940,
+        "Código Programa Governo": 2103343,
+        "Município": 2149219,
+        "UF": 1453170
+      },
+      "columns": [
+        "Código Plano Orçamentário",
+        "Plano Orçamentário",
+        "Código Programa Governo",
+        "UF",
+        "Município",
+        "Código Autor Emenda",
+        "Nome Autor Emenda"
+      ],
+      "examples": [
+        {
+          "after": "null",
+          "before": "\"00 / Sem informação\"",
+          "column": "Código Programa Governo",
+          "period": "202401"
+        },
+        {
+          "after": "null",
+          "before": "\"\"",
+          "column": "Município",
+          "period": "202401"
+        },
+        {
+          "after": "null",
+          "before": "\" / SEM EMENDA\"",
+          "column": "Código Autor Emenda",
+          "period": "202401"
+        }
+      ],
+      "id": "DEF-06",
+      "notes": [],
+      "problem": "Missing values are spelled differently per column: \"-1\" and \"Sem informação\" for plano orçamentário, \"00\" for programa de governo, \"SEM EMENDA\" for the amendment author, and plain empty strings for UF and município.",
+      "rule": "Map every placeholder to a null code; the dictionary gets one explicit \"no value\" entry per dimension so nulls are filterable, not invisible.",
+      "title": "Placeholder values instead of nulls"
+    },
+    {
+      "action": "nullify",
+      "affectedRows": {
+        "2024": 849,
+        "2025": 551,
+        "2026": 340
+      },
+      "columnHits": {
+        "Nome Autor Emenda": 1740
+      },
+      "columns": [
+        "Código Autor Emenda",
+        "Nome Autor Emenda"
+      ],
+      "examples": [
+        {
+          "after": "null",
+          "before": "code=\"\" name=\"Informação do autor não disponível\"",
+          "column": "Nome Autor Emenda",
+          "period": "202401"
+        }
+      ],
+      "id": "DEF-07",
+      "notes": [],
+      "problem": "Rows with an empty author code but the name \"Informação do autor não disponível\": the code says \"no amendment\", the name says \"amendment, author unknown\".",
+      "rule": "Treat as unknown author: null both fields and count. The column is not served, but the count belongs in the report.",
+      "title": "Amendment author code and name disagree"
+    },
+    {
+      "action": "transform",
+      "affectedRows": {
+        "2024": 208557,
+        "2025": 198338,
+        "2026": 139665
+      },
+      "columnHits": {
+        "Nome Localizador": 546560,
+        "Nome Subtítulo": 546560
+      },
+      "columns": [
+        "all name columns"
+      ],
+      "examples": [
+        {
+          "after": "ADMINISTRACAO DA UNIDADE - NACIONAL",
+          "before": "ADMINISTRACAO DA UNIDADE       - NACIONAL",
+          "column": "Nome Subtítulo",
+          "period": "202401"
+        },
+        {
+          "after": "ACOES DE PROTECAO E DEFESA CIVIL - NACIONAL",
+          "before": "ACOES DE PROTECAO E DEFESA CIVIL   - NACIONAL",
+          "column": "Nome Subtítulo",
+          "period": "202401"
+        },
+        {
+          "after": "ATIVOS CIVIS DA UNIAO - NO ESTADO DE SANTA C",
+          "before": "ATIVOS CIVIS DA UNIAO         - NO ESTADO DE SANTA C",
+          "column": "Nome Subtítulo",
+          "period": "202401"
+        }
+      ],
+      "id": "DEF-08",
+      "notes": [],
+      "problem": "Names like \"ADMINISTRACAO DA UNIDADE       - NACIONAL\" keep padding from a fixed-width upstream system.",
+      "rule": "Collapse any run of two or more whitespace characters to a single space.",
+      "title": "Runs of internal spaces (fixed-width remnants)"
+    },
+    {
+      "action": "transform",
+      "affectedRows": {
+        "2024": 22306,
+        "2025": 24191,
+        "2026": 17864
+      },
+      "columnHits": {
+        "Modalidade da Despesa": 11,
+        "Nome Elemento de Despesa": 25400,
+        "Nome Localizador": 38986
+      },
+      "columns": [
+        "all name columns"
+      ],
+      "examples": [
+        {
+          "after": "\"ATIVOS CIVIS DA UNIAO         - NO ESTADO DE\"",
+          "before": "\"ATIVOS CIVIS DA UNIAO         - NO ESTADO DE \"",
+          "column": "Nome Localizador",
+          "period": "202401"
+        },
+        {
+          "after": "\"ATIVOS CIVIS DA UNIAO         - NO ESTADO DO\"",
+          "before": "\"ATIVOS CIVIS DA UNIAO         - NO ESTADO DO \"",
+          "column": "Nome Localizador",
+          "period": "202401"
+        },
+        {
+          "after": "\"Outros Benefícios Assistenciais do servidor\"",
+          "before": "\"Outros Benefícios Assistenciais do servidor \"",
+          "column": "Nome Elemento de Despesa",
+          "period": "202401"
+        }
+      ],
+      "id": "DEF-09",
+      "notes": [],
+      "problem": "Some names carry trailing spaces (e.g. \"ADMINISTRACAO DA UNIDADE - NO ESTADO DO \"), which makes the same value look like two distinct categories.",
+      "rule": "Trim every name column. Applied before dictionary building so keys never differ only by whitespace.",
+      "title": "Leading/trailing whitespace in names"
+    },
+    {
+      "action": "document",
+      "affectedRows": {},
+      "columnHits": {
+        "Nome Órgão Superior": 27,
+        "elemento (suspected)": 67
+      },
+      "columns": [
+        "Nome Órgão Superior",
+        "Nome Elemento de Despesa",
+        "Nome Unidade Orçamentária"
+      ],
+      "examples": [
+        {
+          "after": "Ministério do Desenvolvimento Agrário e Agricultura Familiar",
+          "before": "Ministério do Desenvolvimento Agrário e Agr",
+          "column": "Nome Órgão Superior",
+          "period": "2024"
+        },
+        {
+          "after": "Ministério da Integração e do Desenvolvimento Regional",
+          "before": "Ministério da Integração e do Desenvolvime",
+          "column": "Nome Órgão Superior",
+          "period": "2024"
+        },
+        {
+          "after": "Ministério do Meio Ambiente e Mudança do Clima",
+          "before": "Ministério do Meio Ambiente e Mudança do Cl",
+          "column": "Nome Órgão Superior",
+          "period": "2024"
+        }
+      ],
+      "id": "DEF-10",
+      "notes": [
+        "2024 orgSup: longest name is exactly 45 bytes (column cut upstream) — 9 confirmed via overrides, 0 suspected",
+        "2024 elemento: longest name is exactly 45 bytes (column cut upstream) — 0 confirmed via overrides, 22 suspected",
+        "2025 orgSup: longest name is exactly 45 bytes (column cut upstream) — 9 confirmed via overrides, 0 suspected",
+        "2025 elemento: longest name is exactly 45 bytes (column cut upstream) — 0 confirmed via overrides, 23 suspected",
+        "2026 orgSup: longest name is exactly 45 bytes (column cut upstream) — 9 confirmed via overrides, 0 suspected",
+        "2026 elemento: longest name is exactly 45 bytes (column cut upstream) — 0 confirmed via overrides, 22 suspected"
+      ],
+      "problem": "Several name columns are cut at exactly 45 bytes of UTF-8 — bytes, not characters, so \"Ministério da Ciência, Tecnologia e Inovaç\" loses more letters than an unaccented name would. The cut happened upstream; the file cannot recover it.",
+      "rule": "Kept as published. For órgão superior, a 9-entry hand-curated override table supplies the full name (the only manual data in the repo). Entries at exactly 45 bytes elsewhere are flagged \"suspected\" so the UI can say so.",
+      "title": "Names truncated at the source (45 UTF-8 bytes)"
+    },
+    {
+      "action": "keep",
+      "affectedRows": {
+        "2024": 1193,
+        "2025": 779,
+        "2026": 187
+      },
+      "columnHits": {
+        "Plano Orçamentário": 2159
+      },
+      "columns": [
+        "Plano Orçamentário",
+        "Nome Ação",
+        "Modalidade da Despesa"
+      ],
+      "examples": [
+        {
+          "after": null,
+          "before": "DOTACOES CLASSIFICADAS COM RP 2, INCLUIDAS OU ACRESCIDAS POR EMENDAS DE BANCADA ",
+          "column": "Plano Orçamentário",
+          "period": "202402"
+        },
+        {
+          "after": null,
+          "before": "MEDIDA PROVISORIA N. 1.248, DE 1. DE AGOSTO DE 2024 - CONCESSAO DE BOLSAS PARA A",
+          "column": "Plano Orçamentário",
+          "period": "202409"
+        }
+      ],
+      "id": "DEF-11",
+      "notes": [],
+      "problem": "Legal references like \"§§ 1º e 2º\" arrive as \"?? 1º e 2º\": the section sign was lost before the file was exported (the file itself decodes cleanly as ISO-8859-1).",
+      "rule": "Left alone. Guessing the original character would be inventing data; the count documents the loss.",
+      "title": "\"§\" mangled to \"??\" upstream"
+    },
+    {
+      "action": "document",
+      "affectedRows": {},
+      "columnHits": {},
+      "columns": [
+        "all name columns"
+      ],
+      "examples": [],
+      "id": "DEF-12",
+      "notes": [
+        "2024: Title: orgSup, orgSub, funcao, subfuncao, grupo, elemento, modalidade · UPPER: programa, po, uf · mixed (1480 upper / 1 title): acao",
+        "2025: Title: orgSup, orgSub, funcao, grupo, elemento, modalidade · mixed (2 upper / 99 title): subfuncao · UPPER: programa, acao, po, uf",
+        "2026: Title: orgSup, funcao, grupo, elemento, modalidade · mixed (1 upper / 258 title): orgSub · mixed (2 upper / 99 title): subfuncao · UPPER: programa, acao, po, uf"
+      ],
+      "problem": "Some name columns are Title Case with accents (órgão, função), others are UPPER CASE without accents (ação, plano orçamentário), and a few mix both across rows.",
+      "rule": "Displayed as published. Search folds accents and case so \"acao\" matches \"AÇÃO\" and \"Ação\".",
+      "title": "Three naming conventions in one file"
+    },
+    {
+      "action": "transform",
+      "affectedRows": {
+        "2024": 45088,
+        "2025": 18044,
+        "2026": 5593
+      },
+      "columnHits": {
+        "po": 3926
+      },
+      "columns": [
+        "Plano Orçamentário",
+        "Nome Órgão Subordinado",
+        "Nome Ação"
+      ],
+      "examples": [
+        {
+          "after": "\"0001 - OPERACAO CARRO-PIPA PARA DISTRIBUICAO EMERGENCIAL DE AGUA POTAVEL NO SEMIARIDO BRASILEIRO PELO EXERCITO BRASILEIRO\"",
+          "before": "0001: \"OPERACAO CARRO-PIPA PARA DISTRIBUICAO DE AGUA NO SEMIARIDO BRASILEIRO PELO EXERCITO BRASILEIRO\"",
+          "column": "po",
+          "period": "202412"
+        },
+        {
+          "after": "\"FUNCIONAMENTO DAS INSTITUICOES DA REDE FEDERAL DE EDUCACAO PROFISSIONAL, CIENTIFICA E TECNOLOGICA - DESPESAS DIVERSAS\"",
+          "before": "0000: \"FUNCIONAMENTO DAS INSTITUICOES DA REDE FEDERAL DE EDUCACAO PROFISSIONAL, CIENTIFICA E TECNOLOGICA\"",
+          "column": "po",
+          "period": "202410"
+        },
+        {
+          "after": "\"FUNCIONAMENTO DAS INSTITUICOES DA REDE FEDERAL DE EDUCACAO PROFISSIONAL, CIENTIFICA E TECNOLOGICA - DESPESAS DIVERSAS\"",
+          "before": "0000: \"FUNCIONAMENTO DE INSTITUICOES FEDERAIS DE EDUCACAO PROFISSIONAL E TECNOLOGICA - DESPESAS DIVERSAS\"",
+          "column": "po",
+          "period": "202405"
+        }
+      ],
+      "id": "DEF-13",
+      "notes": [
+        "2024 po: 1503 codes with more than one name (45,088 rows carried a non-latest name)",
+        "2025 po: 1282 codes with more than one name (18,044 rows carried a non-latest name)",
+        "2026 po: 606 codes with more than one name (5,593 rows carried a non-latest name)"
+      ],
+      "problem": "A code can change its name between months (renamed programs, \"- DESPESAS DIVERSAS\" suffixes appearing mid-year).",
+      "rule": "The dictionary keeps one entry per code with the name from the latest period; earlier names are stored as aliases and counted here. Nothing is keyed by name.",
+      "title": "Same code, different names across periods"
+    },
+    {
+      "action": "document",
+      "affectedRows": {},
+      "columnHits": {
+        "acao": 3,
+        "po": 3,
+        "programa": 3
+      },
+      "columns": [
+        "Plano Orçamentário",
+        "Nome Órgão Subordinado",
+        "Nome Ação"
+      ],
+      "examples": [],
+      "id": "DEF-14",
+      "notes": [
+        "2024 programa: 26 names shared by more than one code",
+        "2024 acao: 24 names shared by more than one code",
+        "2024 po: 1731 names shared by more than one code",
+        "2025 programa: 25 names shared by more than one code",
+        "2025 acao: 19 names shared by more than one code",
+        "2025 po: 2291 names shared by more than one code",
+        "2026 programa: 20 names shared by more than one code",
+        "2026 acao: 13 names shared by more than one code",
+        "2026 po: 1558 names shared by more than one code"
+      ],
+      "problem": "Distinct codes can share a display name (e.g. several \"ADMINISTRACAO DA UNIDADE\" plans under different actions).",
+      "rule": "Never join or group by name; all keys are codes. The count is reported so the UI can disambiguate with the code when needed.",
+      "title": "Same name, different codes"
+    },
+    {
+      "action": "transform",
+      "affectedRows": {},
+      "columnHits": {
+        "Código Plano Orçamentário": 3
+      },
+      "columns": [
+        "Código Plano Orçamentário"
+      ],
+      "examples": [],
+      "id": "DEF-15",
+      "notes": [
+        "2024: 320 distinct PO codes expand to 14,773 (órgão subordinado, ação, PO) keys",
+        "2025: 315 distinct PO codes expand to 16,685 (órgão subordinado, ação, PO) keys",
+        "2026: 320 distinct PO codes expand to 13,751 (órgão subordinado, ação, PO) keys"
+      ],
+      "problem": "The plano orçamentário code is only unique inside an action and an agency: code \"0001\" under action \"2000\" names 30 different plans in FY2025.",
+      "rule": "Plano orçamentário is keyed by (órgão subordinado, ação, código PO); the dictionary entry points to its parent action.",
+      "title": "\"Código Plano Orçamentário\" is not a key"
+    },
+    {
+      "action": "keep",
+      "affectedRows": {
+        "2024": 69872,
+        "2025": 71883,
+        "2026": 29284
+      },
+      "columnHits": {
+        "Valor Empenhado (R$)": 142413,
+        "Valor Liquidado (R$)": 32290,
+        "Valor Pago (R$)": 28163,
+        "Valor Restos a Pagar Cancelado (R$)": 2862,
+        "Valor Restos a Pagar Inscritos (R$)": 7320,
+        "Valor Restos a Pagar Pagos (R$)": 11107
+      },
+      "columns": [
+        "Valor Empenhado (R$)",
+        "Valor Liquidado (R$)",
+        "Valor Pago (R$)",
+        "Valor Restos a Pagar Inscritos (R$)",
+        "Valor Restos a Pagar Cancelado (R$)",
+        "Valor Restos a Pagar Pagos (R$)"
+      ],
+      "examples": [
+        {
+          "after": null,
+          "before": "-58524,97",
+          "column": "Valor Restos a Pagar Inscritos (R$)",
+          "period": "202401"
+        },
+        {
+          "after": null,
+          "before": "-1650,31",
+          "column": "Valor Restos a Pagar Inscritos (R$)",
+          "period": "202401"
+        },
+        {
+          "after": null,
+          "before": "-46731,56",
+          "column": "Valor Pago (R$)",
+          "period": "202401"
+        }
+      ],
+      "id": "DEF-16",
+      "notes": [],
+      "problem": "Committed, verified and paid amounts can be negative in a month: they are reversals (estornos) of earlier commitments, not errors.",
+      "rule": "Kept as-is. Dropping or clamping them would overstate execution; the UI shows the sign and monthly cumulative series absorb them.",
+      "title": "Negative amounts"
+    },
+    {
+      "action": "drop-row",
+      "affectedRows": {
+        "2024": 1845,
+        "2025": 1768,
+        "2026": 1031
+      },
+      "columnHits": {},
+      "columns": [
+        "Valor Empenhado (R$)",
+        "Valor Liquidado (R$)",
+        "Valor Pago (R$)",
+        "Valor Restos a Pagar Inscritos (R$)",
+        "Valor Restos a Pagar Cancelado (R$)",
+        "Valor Restos a Pagar Pagos (R$)"
+      ],
+      "examples": [],
+      "id": "DEF-17",
+      "notes": [],
+      "problem": "A budget line can appear in a month with every amount equal to zero (nothing committed, paid or carried over). It adds a row and no information.",
+      "rule": "Drop the row and count it. This is the only rule that drops rows; the count is asserted in validation (input = kept + dropped).",
+      "title": "Rows where all six values are 0,00"
+    },
+    {
+      "action": "document",
+      "affectedRows": {
+        "2024": 829599,
+        "2025": 788115,
+        "2026": 549501
+      },
+      "columnHits": {},
+      "columns": [
+        "Ano e mês do lançamento",
+        "Valor Empenhado (R$)",
+        "Valor Pago (R$)"
+      ],
+      "examples": [],
+      "id": "DEF-18",
+      "notes": [],
+      "problem": "Nothing in the file says whether a month's values are the month's movement or the cumulative position. They are deltas: January 2025 alone shows R$1.76T committed (annual payroll and debt are committed up front), later months show only what changed.",
+      "rule": "Sum months to get the year; compute cumulative series in the aggregation step. Documented because a YTD reading would over-count twelvefold.",
+      "title": "Monthly files are deltas, not year-to-date"
+    }
+  ],
+  "years": [
+    2024,
+    2025,
+    2026
+  ]
+}
