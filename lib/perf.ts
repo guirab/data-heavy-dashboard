@@ -1,16 +1,20 @@
 /**
  * Interaction timing: mark when the user acts, measure when the table
- * commits. Entries are kept on window.__perfLog so scripts/perf/measure.ts
- * and the ?perf=1 overlay can read them.
+ * commits and again after the next frame paints. Entries are kept on
+ * window.__perfLog so scripts/perf/measure.ts and the ?perf=1 overlay can
+ * read them.
  */
 export interface PerfEntry {
   name: string
-  /** interaction -> DOM commit, ms */
+  /** interaction -> pixels on screen (two animation frames after commit), ms */
   ms: number
-  /** worker engine time for the same interaction, ms (when known) */
+  /** interaction -> React commit (layout effect), ms */
+  commitMs: number
+  /** engine time for the same interaction (worker or main thread), ms */
   engineMs?: number
   rows?: number
   at: number
+  done: boolean
 }
 
 declare global {
@@ -29,14 +33,24 @@ export function markInteraction(name: string) {
 
 export function measureCommit(extra: { engineMs?: number; rows?: number } = {}): PerfEntry | null {
   if (!pendingMark || typeof performance === 'undefined') return null
-  const ms = performance.now() - pendingMark.t
-  const entry: PerfEntry = { name: pendingMark.name, ms, at: Date.now(), ...extra }
+  const { name, t } = pendingMark
+  pendingMark = null
+  const commitMs = performance.now() - t
+  const entry: PerfEntry = { name, ms: commitMs, commitMs, at: Date.now(), done: false, ...extra }
   try {
-    performance.measure(`interaction→commit:${pendingMark.name}`, `interaction:${pendingMark.name}`)
+    performance.measure(`interaction→commit:${name}`, `interaction:${name}`)
   } catch {
     /* mark may have been cleared */
   }
-  pendingMark = null
-  if (typeof window !== 'undefined') (window.__perfLog ??= []).push(entry)
+  if (typeof window !== 'undefined') {
+    ;(window.__perfLog ??= []).push(entry)
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        entry.ms = performance.now() - t
+        entry.done = true
+        performance.mark(`paint:${name}`)
+      }),
+    )
+  }
   return entry
 }

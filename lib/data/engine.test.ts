@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { DIMENSIONS, MEASURES, type Dictionaries, type YearManifest } from '@/types/dataset'
 import { DEFAULT_QUERY, type Query } from '@/types/query'
 import { decodeColumns } from './columnar'
-import { buildIndex, runQuery, type Columns } from './engine'
+import { buildIndex, radixSortIndices, runQuery, sortIds, type Columns } from './engine'
 
 // --- tiny synthetic slice -------------------------------------------------
 const dict: Dictionaries = Object.fromEntries(DIMENSIONS.map((d) => [d, [{ code: null, name: '' }]])) as Dictionaries
@@ -33,6 +33,22 @@ for (const d of DIMENSIONS) cols[d] ??= new Uint8Array(rows.length)
 for (const m of MEASURES) cols[m] ??= new Float64Array(rows.length)
 const index = buildIndex(dict)
 const q = (over: Partial<Query>): Query => ({ ...DEFAULT_QUERY, ...over })
+
+describe('radix sort', () => {
+  it('matches the comparator sort, including ties and negatives, in both directions', () => {
+    const keys = Float64Array.from([5, -3, 5, 0, 1e14, -3, 7, 0])
+    const asc = Array.from(radixSortIndices(keys, false))
+    const desc = Array.from(radixSortIndices(keys, true))
+    const cmpAsc = Array.from(keys.keys()).sort((a, b) => keys[a] - keys[b] || a - b)
+    const cmpDesc = Array.from(keys.keys()).sort((a, b) => keys[b] - keys[a] || a - b)
+    expect(asc).toEqual(cmpAsc)
+    expect(desc).toEqual(cmpDesc)
+  })
+  it('handles empty and constant inputs', () => {
+    expect(Array.from(radixSortIndices(new Float64Array(0), false))).toEqual([])
+    expect(Array.from(radixSortIndices(Float64Array.from([2, 2, 2]), true))).toEqual([0, 1, 2])
+  })
+})
 
 describe('engine on a synthetic slice', () => {
   it('excludes no-agency rows by default and counts them', () => {
@@ -87,6 +103,18 @@ describe.skipIf(!has)('engine on the real FY2025 slice', () => {
     const mec = real.orgSup.findIndex((e) => e.code === '26000')
     const mecExpected = agencyMonth.filter((a) => a.orgSup === '26000').reduce((s, a) => s + (a.pago as number), 0)
     expect(r.byAgency[mec * 6 + 2]).toBe(mecExpected)
+  })
+  it('radix and comparator sorts agree on the real slice', () => {
+    const base = runQuery(realCols, real, realIndex, q({ includeNoAgency: true, search: 'saude' }))
+    for (const key of ['pago', 'gap', 'acao', 'month'] as const) {
+      for (const dir of ['asc', 'desc'] as const) {
+        const query = q({ sort: { key, dir } })
+        const a = sortIds(base.ids, realCols, realIndex, query, 'radix')
+        const b = sortIds(base.ids, realCols, realIndex, query, 'comparator')
+        expect(a.length).toBe(b.length)
+        expect(a.every((v, i) => v === b[i])).toBe(true)
+      }
+    }
   })
   it(`filters, sorts and aggregates ${manifest.rows.toLocaleString()} rows well under the 200ms budget in Node`, () => {
     const r = runQuery(realCols, real, realIndex, q({ search: 'universidade', sort: { key: 'pago', dir: 'desc' } }))

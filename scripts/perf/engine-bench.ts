@@ -24,14 +24,17 @@ const cases = [
   ['search universidade', { search: 'universidade' }],
   ['months 6-9 + grupo 4', { months: [6, 9], filters: { grupo: [dict.grupo.findIndex((e) => e.code === '4')] } }],
 ] as const
-for (const [label, over] of cases) {
-  const times: number[] = []
-  let n = 0
-  for (let i = 0; i < 7; i++) {
-    const r = runQuery(cols, dict, index, { ...DEFAULT_QUERY, ...over } as never)
-    times.push(r.engineMs)
-    n = r.ids.length
+for (const strategy of ['comparator', 'radix'] as const) {
+  console.log(`\nsort strategy: ${strategy}`)
+  for (const [label, over] of cases) {
+    const times: number[] = []
+    let n = 0
+    for (let i = 0; i < 7; i++) {
+      const r = runQuery(cols, dict, index, { ...DEFAULT_QUERY, ...over } as never, strategy)
+      times.push(r.engineMs)
+      n = r.ids.length
+    }
+    times.sort((a, b) => a - b)
+    console.log(`${label.padEnd(24)} rows=${n.toString().padStart(7)}  median ${times[3].toFixed(1)}ms  min ${times[0].toFixed(1)}ms`)
   }
-  times.sort((a, b) => a - b)
-  console.log(`${label.padEnd(24)} rows=${n.toString().padStart(7)}  median ${times[3].toFixed(1)}ms  min ${times[0].toFixed(1)}ms`)
 }

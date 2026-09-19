@@ -28,7 +28,9 @@ export function PerfOverlay({ stats, rows }: PerfOverlayProps) {
         {entries.map((e) => (
           <li key={e.at + e.name} className="flex justify-between gap-2">
             <span className="truncate">{e.name}</span>
-            <span className={e.ms > 200 ? 'text-status-critical' : ''}>{e.ms.toFixed(1)}ms</span>
+            <span className={e.ms > 200 ? 'text-status-critical' : ''}>
+              {e.commitMs.toFixed(0)}→{e.done ? e.ms.toFixed(0) : '…'}ms
+            </span>
           </li>
         ))}
       </ul>

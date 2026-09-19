@@ -72,7 +72,7 @@ function searchMasks(search: string, index: Index): Partial<Record<Dimension, Ui
   return out
 }
 
-export function runQuery(cols: Columns, dict: Dictionaries, index: Index, q: Query): QueryResult {
+export function runQuery(cols: Columns, dict: Dictionaries, index: Index, q: Query, sortStrategy: SortStrategy = 'radix'): QueryResult {
   const t0 = performance.now()
   const rows = cols.month.length
   const masks = buildMasks(q, dict)
@@ -125,7 +125,7 @@ export function runQuery(cols: Columns, dict: Dictionaries, index: Index, q: Que
   }
 
   // 3. sort
-  const sorted = sortIds(ids, cols, index, q)
+  const sorted = sortIds(ids, cols, index, q, sortStrategy)
 
   return { ids: sorted, totals, byAgency, byMonth, noAgencyRows: noAgency, engineMs: performance.now() - t0 }
 }
@@ -149,13 +149,66 @@ function sortKeys(ids: Uint32Array, cols: Columns, index: Index, key: Query['sor
   return keys
 }
 
-export function sortIds(ids: Uint32Array, cols: Columns, index: Index, q: Query): Uint32Array {
+/**
+ * LSD radix sort over integer keys (centavos, ranks, months are all integers).
+ * Stable, O(passes × n) with 16-bit digits; replaces the comparator sort whose
+ * per-element callback dominated the engine time (see docs/perf.md).
+ */
+export function radixSortIndices(keys: Float64Array, desc: boolean): Uint32Array {
+  const n = keys.length
+  let min = Infinity
+  let max = -Infinity
+  for (let i = 0; i < n; i++) {
+    const k = keys[i]
+    if (k < min) min = k
+    if (k > max) max = k
+  }
+  if (n === 0 || min === max) {
+    const id = new Uint32Array(n)
+    for (let i = 0; i < n; i++) id[i] = i
+    return id
+  }
+  // Shift to non-negative; descending order = ascending order of (max - key), which
+  // keeps ties in original (row) order in both directions.
+  const shifted = new Float64Array(n)
+  for (let i = 0; i < n; i++) shifted[i] = desc ? max - keys[i] : keys[i] - min
+  const range = max - min
+  const passes = Math.max(1, Math.ceil(Math.log2(range + 1) / 16))
+  let src = new Uint32Array(n)
+  let dst = new Uint32Array(n)
+  for (let i = 0; i < n; i++) src[i] = i
+  const counts = new Uint32Array(65537)
+  let divisor = 1
+  for (let p = 0; p < passes; p++) {
+    counts.fill(0)
+    for (let i = 0; i < n; i++) counts[(Math.floor(shifted[src[i]] / divisor) % 65536) + 1]++
+    for (let d = 0; d < 65536; d++) counts[d + 1] += counts[d]
+    for (let i = 0; i < n; i++) {
+      const idx = src[i]
+      dst[counts[Math.floor(shifted[idx] / divisor) % 65536]++] = idx
+    }
+    const t = src
+    src = dst
+    dst = t
+    divisor *= 65536
+  }
+  return src
+}
+
+export type SortStrategy = 'radix' | 'comparator'
+
+export function sortIds(ids: Uint32Array, cols: Columns, index: Index, q: Query, strategy: SortStrategy = 'radix'): Uint32Array {
   const keys = sortKeys(ids, cols, index, q.sort.key)
-  const order = new Uint32Array(ids.length)
-  for (let i = 0; i < order.length; i++) order[i] = i
-  const sign = q.sort.dir === 'asc' ? 1 : -1
-  // Tie-break on row index so the order is stable and deterministic.
-  order.sort((a, b) => sign * (keys[a] - keys[b]) || a - b)
+  let order: Uint32Array
+  if (strategy === 'radix') {
+    order = radixSortIndices(keys, q.sort.dir === 'desc')
+  } else {
+    order = new Uint32Array(ids.length)
+    for (let i = 0; i < order.length; i++) order[i] = i
+    const sign = q.sort.dir === 'asc' ? 1 : -1
+    // Tie-break on row index so the order is stable and deterministic.
+    order.sort((a, b) => sign * (keys[a] - keys[b]) || a - b)
+  }
   const out = new Uint32Array(ids.length)
   for (let i = 0; i < out.length; i++) out[i] = ids[order[i]]
   return out

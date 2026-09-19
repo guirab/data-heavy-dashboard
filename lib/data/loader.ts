@@ -18,23 +18,43 @@ export class DatasetLoadError extends Error {
 
 export const dataUrl = (year: number, file: string) => `/data/v1/${year}/${file}`
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const res = await fetch(url)
+/** fetch() rejects with a bare TypeError when the network is down; give it a kind. */
+async function get(url: string): Promise<Response> {
+  let res: Response
+  try {
+    res = await fetch(url)
+  } catch (e) {
+    throw new DatasetLoadError('network', `${url}: ${e instanceof Error ? e.message : String(e)}`)
+  }
   if (!res.ok) throw new DatasetLoadError('network', `${url}: HTTP ${res.status}`)
-  return (await res.json()) as T
+  return res
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const res = await get(url)
+  try {
+    return (await res.json()) as T
+  } catch (e) {
+    throw new DatasetLoadError('format', `${url}: ${e instanceof Error ? e.message : 'invalid JSON'}`)
+  }
 }
 
 async function fetchBytes(url: string, total: number, onProgress: (loaded: number) => void): Promise<Uint8Array> {
-  const res = await fetch(url)
-  if (!res.ok || !res.body) throw new DatasetLoadError('network', `${url}: HTTP ${res.status}`)
+  const res = await get(url)
+  if (!res.body) throw new DatasetLoadError('network', `${url}: empty body`)
   const reader = res.body.getReader()
   const chunks: Uint8Array[] = []
   let loaded = 0
   for (;;) {
-    const { done, value } = await reader.read()
-    if (done) break
-    chunks.push(value)
-    loaded += value.byteLength
+    let step: ReadableStreamReadResult<Uint8Array>
+    try {
+      step = await reader.read()
+    } catch (e) {
+      throw new DatasetLoadError('network', `${url}: connection lost after ${loaded} bytes (${e instanceof Error ? e.message : String(e)})`)
+    }
+    if (step.done) break
+    chunks.push(step.value)
+    loaded += step.value.byteLength
     onProgress(Math.min(loaded, total))
   }
   const out = new Uint8Array(loaded)

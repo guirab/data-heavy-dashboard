@@ -27,7 +27,7 @@ self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
       post({ id: req.id, type: 'loaded', manifest: loaded.manifest, dict: loaded.dict, buffer: loaded.buffer, columnar: loaded.manifest.columnar, timings: loaded.timings as Record<string, number> })
     } else if (req.type === 'query') {
       if (!state) throw new DatasetLoadError('format', 'query before load')
-      const result = runQuery(state.cols, state.dict, state.index, req.query)
+      const result = runQuery(state.cols, state.dict, state.index, req.query, req.query.sortStrategy ?? 'radix')
       post({ id: req.id, type: 'result', result }, [result.ids.buffer, result.totals.buffer, result.byAgency.buffer, result.byMonth.buffer])
     }
   } catch (e) {

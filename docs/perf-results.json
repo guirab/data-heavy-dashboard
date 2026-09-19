@@ -1,0 +1,1102 @@
+[
+  {
+    "mode": "A10k",
+    "loadMs": [
+      3812,
+      3895,
+      3816,
+      3807,
+      3932
+    ],
+    "heap": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failed": null,
+    "samples": [
+      {
+        "mode": "A10k",
+        "step": "sort by Paid",
+        "ms": 2931.699999999255,
+        "commitMs": 1155.5,
+        "engineMs": 177.2999999988824,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "search \"universidade\"",
+        "ms": 2966,
+        "commitMs": 1568.7000000011176,
+        "engineMs": 646.5,
+        "rows": 76498
+      },
+      {
+        "mode": "A10k",
+        "step": "clear search",
+        "ms": 2388.5999999996275,
+        "commitMs": 986,
+        "engineMs": 184.90000000037253,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "months jun–dez",
+        "ms": 1705.8999999985099,
+        "commitMs": 842.7999999988824,
+        "engineMs": 136.7999999988824,
+        "rows": 195852
+      },
+      {
+        "mode": "A10k",
+        "step": "filter agency (Educação)",
+        "ms": 2218.5999999996275,
+        "commitMs": 884.5999999996275,
+        "engineMs": 40.29999999888241,
+        "rows": 80203
+      },
+      {
+        "mode": "A10k",
+        "step": "sort by Paid",
+        "ms": 2880.2000000011176,
+        "commitMs": 1136.9000000003725,
+        "engineMs": 182.5,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "search \"universidade\"",
+        "ms": 2858.5,
+        "commitMs": 1545.5999999996275,
+        "engineMs": 647.9000000003725,
+        "rows": 76498
+      },
+      {
+        "mode": "A10k",
+        "step": "clear search",
+        "ms": 2466.7000000011176,
+        "commitMs": 977.9000000003725,
+        "engineMs": 183.09999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "months jun–dez",
+        "ms": 1840.2999999988824,
+        "commitMs": 1011.1999999992549,
+        "engineMs": 314.2000000011176,
+        "rows": 195852
+      },
+      {
+        "mode": "A10k",
+        "step": "filter agency (Educação)",
+        "ms": 2229.89999999851,
+        "commitMs": 917.2999999988824,
+        "engineMs": 41.29999999888241,
+        "rows": 80203
+      },
+      {
+        "mode": "A10k",
+        "step": "sort by Paid",
+        "ms": 2828.7999999988824,
+        "commitMs": 1176.199999999255,
+        "engineMs": 197.7000000011176,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "search \"universidade\"",
+        "ms": 3269.5,
+        "commitMs": 1551.7000000011176,
+        "engineMs": 649.5999999996275,
+        "rows": 76498
+      },
+      {
+        "mode": "A10k",
+        "step": "clear search",
+        "ms": 2339.7000000011176,
+        "commitMs": 994.7000000011176,
+        "engineMs": 206.19999999925494,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "months jun–dez",
+        "ms": 1713.699999999255,
+        "commitMs": 879.5,
+        "engineMs": 155.5,
+        "rows": 195852
+      },
+      {
+        "mode": "A10k",
+        "step": "filter agency (Educação)",
+        "ms": 2319.0999999996275,
+        "commitMs": 962.1999999992549,
+        "engineMs": 51.09999999962747,
+        "rows": 80203
+      },
+      {
+        "mode": "A10k",
+        "step": "sort by Paid",
+        "ms": 3043.89999999851,
+        "commitMs": 1175.8999999985099,
+        "engineMs": 179.80000000074506,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "search \"universidade\"",
+        "ms": 2965.2999999988824,
+        "commitMs": 1532.2999999988824,
+        "engineMs": 633.6999999992549,
+        "rows": 76498
+      },
+      {
+        "mode": "A10k",
+        "step": "clear search",
+        "ms": 2517.9000000003725,
+        "commitMs": 1020.4000000003725,
+        "engineMs": 186.40000000037253,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "months jun–dez",
+        "ms": 1708.2000000011176,
+        "commitMs": 845.4000000003725,
+        "engineMs": 119.40000000037253,
+        "rows": 195852
+      },
+      {
+        "mode": "A10k",
+        "step": "filter agency (Educação)",
+        "ms": 2299.0999999996275,
+        "commitMs": 922.3999999985099,
+        "engineMs": 39.399999998509884,
+        "rows": 80203
+      },
+      {
+        "mode": "A10k",
+        "step": "sort by Paid",
+        "ms": 2982.2000000011176,
+        "commitMs": 1166.5999999996275,
+        "engineMs": 178.90000000037253,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "search \"universidade\"",
+        "ms": 3008,
+        "commitMs": 1589.2000000011176,
+        "engineMs": 653.8000000007451,
+        "rows": 76498
+      },
+      {
+        "mode": "A10k",
+        "step": "clear search",
+        "ms": 2491.89999999851,
+        "commitMs": 1026.7999999988824,
+        "engineMs": 183.40000000037253,
+        "rows": 315755
+      },
+      {
+        "mode": "A10k",
+        "step": "months jun–dez",
+        "ms": 1704.9000000003725,
+        "commitMs": 833.7000000011176,
+        "engineMs": 118.80000000074506,
+        "rows": 195852
+      },
+      {
+        "mode": "A10k",
+        "step": "filter agency (Educação)",
+        "ms": 2311.300000000745,
+        "commitMs": 935.4000000003725,
+        "engineMs": 40.19999999925494,
+        "rows": 80203
+      }
+    ]
+  },
+  {
+    "mode": "A50k",
+    "loadMs": [
+      14300,
+      14570,
+      14485,
+      14501,
+      14574
+    ],
+    "heap": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failed": null,
+    "samples": [
+      {
+        "mode": "A50k",
+        "step": "sort by Paid",
+        "ms": 18750,
+        "commitMs": 9519.800000000745,
+        "engineMs": 207.7999999988824,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "search \"universidade\"",
+        "ms": 16305.700000001118,
+        "commitMs": 8966.60000000149,
+        "engineMs": 651.1999999992549,
+        "rows": 76498
+      },
+      {
+        "mode": "A50k",
+        "step": "clear search",
+        "ms": 12830.199999999255,
+        "commitMs": 4189.9000000003725,
+        "engineMs": 187.5,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "months jun–dez",
+        "ms": 9313.799999998882,
+        "commitMs": 4016.199999999255,
+        "engineMs": 128.59999999962747,
+        "rows": 195852
+      },
+      {
+        "mode": "A50k",
+        "step": "filter agency (Educação)",
+        "ms": 15280.099999999627,
+        "commitMs": 8138,
+        "engineMs": 46.59999999962747,
+        "rows": 80203
+      },
+      {
+        "mode": "A50k",
+        "step": "sort by Paid",
+        "ms": 18928.89999999851,
+        "commitMs": 9289,
+        "engineMs": 436.09999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "search \"universidade\"",
+        "ms": 15518.199999999255,
+        "commitMs": 7734.0999999996275,
+        "engineMs": 654.6999999992549,
+        "rows": 76498
+      },
+      {
+        "mode": "A50k",
+        "step": "clear search",
+        "ms": 13898.900000000373,
+        "commitMs": 4313.10000000149,
+        "engineMs": 182,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "months jun–dez",
+        "ms": 10210.400000000373,
+        "commitMs": 3959.9000000003725,
+        "engineMs": 130.09999999962747,
+        "rows": 195852
+      },
+      {
+        "mode": "A50k",
+        "step": "filter agency (Educação)",
+        "ms": 16248.800000000745,
+        "commitMs": 7991.800000000745,
+        "engineMs": 49.20000000111759,
+        "rows": 80203
+      },
+      {
+        "mode": "A50k",
+        "step": "sort by Paid",
+        "ms": 18823.900000000373,
+        "commitMs": 9363,
+        "engineMs": 454.80000000074506,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "search \"universidade\"",
+        "ms": 15396.300000000745,
+        "commitMs": 7383.5999999996275,
+        "engineMs": 631.9000000003725,
+        "rows": 76498
+      },
+      {
+        "mode": "A50k",
+        "step": "clear search",
+        "ms": 13963.800000000745,
+        "commitMs": 4304.9000000003725,
+        "engineMs": 185.09999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "months jun–dez",
+        "ms": 10144.699999999255,
+        "commitMs": 3910.39999999851,
+        "engineMs": 118.80000000074506,
+        "rows": 195852
+      },
+      {
+        "mode": "A50k",
+        "step": "filter agency (Educação)",
+        "ms": 15891.300000000745,
+        "commitMs": 7683.5,
+        "engineMs": 49.40000000037253,
+        "rows": 80203
+      },
+      {
+        "mode": "A50k",
+        "step": "sort by Paid",
+        "ms": 18742.89999999851,
+        "commitMs": 9537.099999999627,
+        "engineMs": 195.30000000074506,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "search \"universidade\"",
+        "ms": 16359.599999999627,
+        "commitMs": 8942.699999999255,
+        "engineMs": 651,
+        "rows": 76498
+      },
+      {
+        "mode": "A50k",
+        "step": "clear search",
+        "ms": 12795.5,
+        "commitMs": 4280.200000001118,
+        "engineMs": 181,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "months jun–dez",
+        "ms": 9097.400000000373,
+        "commitMs": 3904,
+        "engineMs": 131.59999999962747,
+        "rows": 195852
+      },
+      {
+        "mode": "A50k",
+        "step": "filter agency (Educação)",
+        "ms": 14812.099999999627,
+        "commitMs": 7650,
+        "engineMs": 47.90000000037253,
+        "rows": 80203
+      },
+      {
+        "mode": "A50k",
+        "step": "sort by Paid",
+        "ms": 18844.300000000745,
+        "commitMs": 9287.60000000149,
+        "engineMs": 215.59999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "search \"universidade\"",
+        "ms": 15395.900000000373,
+        "commitMs": 7542.4000000003725,
+        "engineMs": 648.0999999996275,
+        "rows": 76498
+      },
+      {
+        "mode": "A50k",
+        "step": "clear search",
+        "ms": 13902.200000001118,
+        "commitMs": 4277.4000000003725,
+        "engineMs": 182.40000000037253,
+        "rows": 315755
+      },
+      {
+        "mode": "A50k",
+        "step": "months jun–dez",
+        "ms": 10209.099999999627,
+        "commitMs": 3893.199999999255,
+        "engineMs": 122,
+        "rows": 195852
+      },
+      {
+        "mode": "A50k",
+        "step": "filter agency (Educação)",
+        "ms": 16226.700000001118,
+        "commitMs": 7998.9000000003725,
+        "engineMs": 43.30000000074506,
+        "rows": 80203
+      }
+    ]
+  },
+  {
+    "mode": "B",
+    "loadMs": [
+      1384,
+      1384,
+      1387,
+      1387,
+      1375
+    ],
+    "heap": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failed": null,
+    "samples": [
+      {
+        "mode": "B",
+        "step": "sort by Paid",
+        "ms": 207.90000000037253,
+        "commitMs": 201.30000000074506,
+        "engineMs": 184.40000000037253,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "search \"universidade\"",
+        "ms": 607.2000000011176,
+        "commitMs": 601,
+        "engineMs": 593.5999999996275,
+        "rows": 76498
+      },
+      {
+        "mode": "B",
+        "step": "clear search",
+        "ms": 206.10000000149012,
+        "commitMs": 200.2000000011176,
+        "engineMs": 180.7000000011176,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "months jun–dez",
+        "ms": 127.20000000111759,
+        "commitMs": 121.80000000074506,
+        "engineMs": 107.59999999962747,
+        "rows": 195852
+      },
+      {
+        "mode": "B",
+        "step": "filter agency (Educação)",
+        "ms": 75.69999999925494,
+        "commitMs": 50.5,
+        "engineMs": 43.09999999962747,
+        "rows": 80203
+      },
+      {
+        "mode": "B",
+        "step": "sort by Paid",
+        "ms": 211.90000000037253,
+        "commitMs": 205.2000000011176,
+        "engineMs": 188.09999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "search \"universidade\"",
+        "ms": 612,
+        "commitMs": 605.7000000011176,
+        "engineMs": 598,
+        "rows": 76498
+      },
+      {
+        "mode": "B",
+        "step": "clear search",
+        "ms": 210.90000000037253,
+        "commitMs": 205,
+        "engineMs": 178.7000000011176,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "months jun–dez",
+        "ms": 140.2999999988824,
+        "commitMs": 135,
+        "engineMs": 121.5,
+        "rows": 195852
+      },
+      {
+        "mode": "B",
+        "step": "filter agency (Educação)",
+        "ms": 75.30000000074506,
+        "commitMs": 50.600000001490116,
+        "engineMs": 43.100000001490116,
+        "rows": 80203
+      },
+      {
+        "mode": "B",
+        "step": "sort by Paid",
+        "ms": 206.90000000037253,
+        "commitMs": 199.90000000037253,
+        "engineMs": 182.5,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "search \"universidade\"",
+        "ms": 626.8000000007451,
+        "commitMs": 620.6000000014901,
+        "engineMs": 612.8999999985099,
+        "rows": 76498
+      },
+      {
+        "mode": "B",
+        "step": "clear search",
+        "ms": 212.90000000037253,
+        "commitMs": 207,
+        "engineMs": 187.09999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "months jun–dez",
+        "ms": 133.69999999925494,
+        "commitMs": 128.09999999962747,
+        "engineMs": 112.90000000037253,
+        "rows": 195852
+      },
+      {
+        "mode": "B",
+        "step": "filter agency (Educação)",
+        "ms": 93.79999999888241,
+        "commitMs": 72.19999999925494,
+        "engineMs": 64.69999999925494,
+        "rows": 80203
+      },
+      {
+        "mode": "B",
+        "step": "sort by Paid",
+        "ms": 212.5,
+        "commitMs": 204.7999999988824,
+        "engineMs": 186.30000000074506,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "search \"universidade\"",
+        "ms": 629.9000000003725,
+        "commitMs": 623.2999999988824,
+        "engineMs": 615.8000000007451,
+        "rows": 76498
+      },
+      {
+        "mode": "B",
+        "step": "clear search",
+        "ms": 200.30000000074506,
+        "commitMs": 193.90000000037253,
+        "engineMs": 175.30000000074506,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "months jun–dez",
+        "ms": 135,
+        "commitMs": 129.09999999962747,
+        "engineMs": 115.5,
+        "rows": 195852
+      },
+      {
+        "mode": "B",
+        "step": "filter agency (Educação)",
+        "ms": 60.5,
+        "commitMs": 50.29999999888241,
+        "engineMs": 42.79999999888241,
+        "rows": 80203
+      },
+      {
+        "mode": "B",
+        "step": "sort by Paid",
+        "ms": 205.2999999988824,
+        "commitMs": 197.7999999988824,
+        "engineMs": 177.2000000011176,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "search \"universidade\"",
+        "ms": 606.1999999992549,
+        "commitMs": 599.9000000003725,
+        "engineMs": 591,
+        "rows": 76498
+      },
+      {
+        "mode": "B",
+        "step": "clear search",
+        "ms": 207.2000000011176,
+        "commitMs": 200.60000000149012,
+        "engineMs": 179.2999999988824,
+        "rows": 315755
+      },
+      {
+        "mode": "B",
+        "step": "months jun–dez",
+        "ms": 135.7000000011176,
+        "commitMs": 130.30000000074506,
+        "engineMs": 115,
+        "rows": 195852
+      },
+      {
+        "mode": "B",
+        "step": "filter agency (Educação)",
+        "ms": 76.40000000037253,
+        "commitMs": 49.79999999888241,
+        "engineMs": 44.19999999925494,
+        "rows": 80203
+      }
+    ]
+  },
+  {
+    "mode": "C",
+    "loadMs": [
+      1426,
+      1418,
+      1411,
+      1435,
+      1411
+    ],
+    "heap": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failed": null,
+    "samples": [
+      {
+        "mode": "C",
+        "step": "sort by Paid",
+        "ms": 167.2000000011176,
+        "commitMs": 132.7000000011176,
+        "engineMs": 74.20000000111759,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "search \"universidade\"",
+        "ms": 91.69999999925494,
+        "commitMs": 70.80000000074506,
+        "engineMs": 30.200000001117587,
+        "rows": 76498
+      },
+      {
+        "mode": "C",
+        "step": "clear search",
+        "ms": 237,
+        "commitMs": 208.80000000074506,
+        "engineMs": 171.90000000037253,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "months jun–dez",
+        "ms": 123.59999999962747,
+        "commitMs": 101.69999999925494,
+        "engineMs": 55.09999999962747,
+        "rows": 195852
+      },
+      {
+        "mode": "C",
+        "step": "filter agency (Educação)",
+        "ms": 85.89999999850988,
+        "commitMs": 68.39999999850988,
+        "engineMs": 20.699999999254942,
+        "rows": 80203
+      },
+      {
+        "mode": "C",
+        "step": "sort by Paid",
+        "ms": 147.19999999925494,
+        "commitMs": 128,
+        "engineMs": 75.29999999888241,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "search \"universidade\"",
+        "ms": 93.20000000111759,
+        "commitMs": 72.5,
+        "engineMs": 29,
+        "rows": 76498
+      },
+      {
+        "mode": "C",
+        "step": "clear search",
+        "ms": 126.09999999962747,
+        "commitMs": 101.40000000037253,
+        "engineMs": 71.59999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "months jun–dez",
+        "ms": 130.2999999988824,
+        "commitMs": 110.59999999962747,
+        "engineMs": 60,
+        "rows": 195852
+      },
+      {
+        "mode": "C",
+        "step": "filter agency (Educação)",
+        "ms": 105,
+        "commitMs": 86.09999999962747,
+        "engineMs": 36.29999999888241,
+        "rows": 80203
+      },
+      {
+        "mode": "C",
+        "step": "sort by Paid",
+        "ms": 141.2000000011176,
+        "commitMs": 123,
+        "engineMs": 77,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "search \"universidade\"",
+        "ms": 93.60000000149012,
+        "commitMs": 75.20000000111759,
+        "engineMs": 31.5,
+        "rows": 76498
+      },
+      {
+        "mode": "C",
+        "step": "clear search",
+        "ms": 134.09999999962747,
+        "commitMs": 113.20000000111759,
+        "engineMs": 81,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "months jun–dez",
+        "ms": 116.09999999962747,
+        "commitMs": 95.59999999962747,
+        "engineMs": 55,
+        "rows": 195852
+      },
+      {
+        "mode": "C",
+        "step": "filter agency (Educação)",
+        "ms": 94.30000000074506,
+        "commitMs": 76.60000000149012,
+        "engineMs": 24.5,
+        "rows": 80203
+      },
+      {
+        "mode": "C",
+        "step": "sort by Paid",
+        "ms": 166.30000000074506,
+        "commitMs": 147,
+        "engineMs": 72.19999999925494,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "search \"universidade\"",
+        "ms": 97.09999999962747,
+        "commitMs": 73.59999999962747,
+        "engineMs": 28.600000001490116,
+        "rows": 76498
+      },
+      {
+        "mode": "C",
+        "step": "clear search",
+        "ms": 139.2999999988824,
+        "commitMs": 114.89999999850988,
+        "engineMs": 76.59999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "months jun–dez",
+        "ms": 147.2999999988824,
+        "commitMs": 100.59999999962747,
+        "engineMs": 47.5,
+        "rows": 195852
+      },
+      {
+        "mode": "C",
+        "step": "filter agency (Educação)",
+        "ms": 99.20000000111759,
+        "commitMs": 81.90000000037253,
+        "engineMs": 26.09999999962747,
+        "rows": 80203
+      },
+      {
+        "mode": "C",
+        "step": "sort by Paid",
+        "ms": 158.69999999925494,
+        "commitMs": 135.69999999925494,
+        "engineMs": 76.60000000149012,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "search \"universidade\"",
+        "ms": 117.29999999888241,
+        "commitMs": 84.19999999925494,
+        "engineMs": 28.699999999254942,
+        "rows": 76498
+      },
+      {
+        "mode": "C",
+        "step": "clear search",
+        "ms": 162.40000000037253,
+        "commitMs": 130.5,
+        "engineMs": 77.59999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "C",
+        "step": "months jun–dez",
+        "ms": 104.5,
+        "commitMs": 83.09999999962747,
+        "engineMs": 42.70000000111759,
+        "rows": 195852
+      },
+      {
+        "mode": "C",
+        "step": "filter agency (Educação)",
+        "ms": 87.59999999962747,
+        "commitMs": 70,
+        "engineMs": 19.800000000745058,
+        "rows": 80203
+      }
+    ]
+  },
+  {
+    "mode": "D",
+    "loadMs": [
+      1406,
+      1445,
+      1419,
+      1407,
+      1402
+    ],
+    "heap": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failed": null,
+    "samples": [
+      {
+        "mode": "D",
+        "step": "sort by Paid",
+        "ms": 113.30000000074506,
+        "commitMs": 93.5,
+        "engineMs": 30.59999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "search \"universidade\"",
+        "ms": 102.19999999925494,
+        "commitMs": 81.19999999925494,
+        "engineMs": 22.700000001117587,
+        "rows": 76498
+      },
+      {
+        "mode": "D",
+        "step": "clear search",
+        "ms": 87.59999999962747,
+        "commitMs": 58,
+        "engineMs": 29.59999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "months jun–dez",
+        "ms": 92.40000000037253,
+        "commitMs": 70.40000000037253,
+        "engineMs": 31.800000000745058,
+        "rows": 195852
+      },
+      {
+        "mode": "D",
+        "step": "filter agency (Educação)",
+        "ms": 97.09999999962747,
+        "commitMs": 79.09999999962747,
+        "engineMs": 27.699999999254942,
+        "rows": 80203
+      },
+      {
+        "mode": "D",
+        "step": "sort by Paid",
+        "ms": 85.30000000074506,
+        "commitMs": 68.09999999962747,
+        "engineMs": 28,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "search \"universidade\"",
+        "ms": 76.19999999925494,
+        "commitMs": 53.09999999962747,
+        "engineMs": 16,
+        "rows": 76498
+      },
+      {
+        "mode": "D",
+        "step": "clear search",
+        "ms": 103.69999999925494,
+        "commitMs": 81.09999999962747,
+        "engineMs": 47.19999999925494,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "months jun–dez",
+        "ms": 109.90000000037253,
+        "commitMs": 86.40000000037253,
+        "engineMs": 35.5,
+        "rows": 195852
+      },
+      {
+        "mode": "D",
+        "step": "filter agency (Educação)",
+        "ms": 87,
+        "commitMs": 68.20000000111759,
+        "engineMs": 19,
+        "rows": 80203
+      },
+      {
+        "mode": "D",
+        "step": "sort by Paid",
+        "ms": 98.09999999962747,
+        "commitMs": 79.59999999962747,
+        "engineMs": 33.30000000074506,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "search \"universidade\"",
+        "ms": 77.09999999962747,
+        "commitMs": 55.70000000111759,
+        "engineMs": 19.09999999962747,
+        "rows": 76498
+      },
+      {
+        "mode": "D",
+        "step": "clear search",
+        "ms": 102.19999999925494,
+        "commitMs": 78,
+        "engineMs": 32.09999999962747,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "months jun–dez",
+        "ms": 142.39999999850988,
+        "commitMs": 121.5,
+        "engineMs": 79.30000000074506,
+        "rows": 195852
+      },
+      {
+        "mode": "D",
+        "step": "filter agency (Educação)",
+        "ms": 89.5,
+        "commitMs": 71.40000000037253,
+        "engineMs": 14.599999999627471,
+        "rows": 80203
+      },
+      {
+        "mode": "D",
+        "step": "sort by Paid",
+        "ms": 97,
+        "commitMs": 72.80000000074506,
+        "engineMs": 29.199999999254942,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "search \"universidade\"",
+        "ms": 76.10000000149012,
+        "commitMs": 55.90000000037253,
+        "engineMs": 15.400000000372529,
+        "rows": 76498
+      },
+      {
+        "mode": "D",
+        "step": "clear search",
+        "ms": 100.90000000037253,
+        "commitMs": 79.59999999962747,
+        "engineMs": 50.5,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "months jun–dez",
+        "ms": 84.29999999888241,
+        "commitMs": 62,
+        "engineMs": 23.299999998882413,
+        "rows": 195852
+      },
+      {
+        "mode": "D",
+        "step": "filter agency (Educação)",
+        "ms": 91.59999999962747,
+        "commitMs": 69.40000000037253,
+        "engineMs": 18.40000000037253,
+        "rows": 80203
+      },
+      {
+        "mode": "D",
+        "step": "sort by Paid",
+        "ms": 102.59999999962747,
+        "commitMs": 87.29999999888241,
+        "engineMs": 31.90000000037253,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "search \"universidade\"",
+        "ms": 92.10000000149012,
+        "commitMs": 72.5,
+        "engineMs": 25.40000000037253,
+        "rows": 76498
+      },
+      {
+        "mode": "D",
+        "step": "clear search",
+        "ms": 79.39999999850988,
+        "commitMs": 57.5,
+        "engineMs": 27.700000001117587,
+        "rows": 315755
+      },
+      {
+        "mode": "D",
+        "step": "months jun–dez",
+        "ms": 86.90000000037253,
+        "commitMs": 67.5,
+        "engineMs": 25.5,
+        "rows": 195852
+      },
+      {
+        "mode": "D",
+        "step": "filter agency (Educação)",
+        "ms": 82,
+        "commitMs": 64,
+        "engineMs": 15.899999998509884,
+        "rows": 80203
+      }
+    ]
+  }
+]

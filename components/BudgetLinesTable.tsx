@@ -72,9 +72,18 @@ export function BudgetLinesTable({ columns, dict, ids, sort, onSort, engineMs, h
     if (ids.length && active.r >= ids.length) setActive((a) => ({ ...a, r: ids.length - 1 }))
   }, [ids.length, active.r])
 
-  // Move DOM focus to the active cell once it is rendered.
+  // Move DOM focus to the active cell once it is rendered — unless the user has
+  // meanwhile moved focus elsewhere (a header button, another control).
   useEffect(() => {
     if (!focusPending.current) return
+    // Focus falls to <body> when the previously focused cell is virtualized away; that is
+    // still "ours". Anything else focused (a header button, a filter) wins.
+    const current = document.activeElement
+    const ours = !current || current === document.body || (scrollRef.current?.contains(current) && !current.closest('[role="columnheader"]'))
+    if (!ours) {
+      focusPending.current = false
+      return
+    }
     const el = scrollRef.current?.querySelector<HTMLElement>(`[data-r="${active.r}"][data-c="${active.c}"]`)
     if (el) {
       el.focus({ preventScroll: true })

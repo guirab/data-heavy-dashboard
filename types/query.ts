@@ -12,6 +12,8 @@ export interface Query {
   /** Rows normalized to a null agency (DEF-05) are excluded from rankings by default. */
   includeNoAgency: boolean
   sort: { key: SortKey; dir: 'asc' | 'desc' }
+  /** Engine sort implementation; 'comparator' exists only for the before/after measurement. */
+  sortStrategy?: 'radix' | 'comparator'
 }
 
 export const DEFAULT_QUERY: Query = {

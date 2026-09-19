@@ -37,7 +37,9 @@ export function ChartFrame({ title, description, summary, table, children, previ
         </div>
       </div>
       {showTable ? (
-        <div className="mt-3 max-h-[480px] overflow-auto">{table}</div>
+        <div className="mt-3 max-h-[480px] overflow-auto rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring" tabIndex={0} role="region" aria-label={`${title} — data table`}>
+          {table}
+        </div>
       ) : (
         <figure className="mt-3" role="img" aria-label={summary}>
           {children}

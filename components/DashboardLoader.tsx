@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useSyncExternalStore } from 'react'
 import dynamic from 'next/dynamic'
 import type { DashboardProps } from '@/components/Dashboard'
 import { KpiTiles } from '@/components/KpiTiles'
@@ -21,7 +21,7 @@ function StaticPreview() {
   const yearInfo = p.index.years.find((y) => y.year === p.initialYear)!
   const view = fromPreAggregates(p.initialAgencyMonth, [1, 12], yearInfo.months, undefined, false)
   return (
-    <div className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-6" aria-busy="true">
+    <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-6" aria-busy="true">
       <PageHeader source={p.index.source} sourceLastModified={yearInfo.sourceLastModified} lastPublished={p.index.lastPublished} />
       <p className="text-sm text-muted-foreground">Fiscal year {p.initialYear}, all agencies. Loading the interactive view…</p>
       <KpiTiles totals={view.totals} preview />
@@ -30,16 +30,27 @@ function StaticPreview() {
         <Skeleton className="h-[420px] rounded-lg" />
       </div>
       <Skeleton className="h-[560px] rounded-lg" />
-    </div>
+    </main>
   )
 }
 
 const DashboardDynamic = dynamic(() => import('@/components/Dashboard').then((m) => m.Dashboard), { ssr: false, loading: StaticPreview })
+const NaiveDynamic = dynamic(() => import('@/components/naive/NaiveDashboard').then((m) => m.NaiveDashboard), { ssr: false, loading: StaticPreview })
+
+/** ?mode=naive renders the documented baseline instead of the real dashboard. */
+function ModeSwitch(props: DashboardProps) {
+  const naive = useSyncExternalStore(
+    () => () => {},
+    () => new URLSearchParams(window.location.search).get('mode') === 'naive',
+    () => false,
+  )
+  return naive ? <NaiveDynamic {...props} /> : <DashboardDynamic {...props} />
+}
 
 export function DashboardLoader(props: DashboardProps) {
   return (
     <PreviewContext value={props}>
-      <DashboardDynamic {...props} />
+      <ModeSwitch {...props} />
     </PreviewContext>
   )
 }

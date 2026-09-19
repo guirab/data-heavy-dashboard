@@ -40,10 +40,11 @@ export function Dashboard({ index, initialYear, initialAgencyMonth, yearly }: Da
   // Client-only component (see DashboardLoader): the URL is the initial state, and stays in sync.
   const [filters, rawDispatch] = useReducer(filtersReducer, undefined, () => parseFilters(window.location.search, initialYear, yearNumbers))
   const [perf] = useState(() => new URLSearchParams(window.location.search).get('perf') === '1')
+  const [sortStrategy] = useState<'radix' | 'comparator'>(() => (new URLSearchParams(window.location.search).get('engine') === 'comparator' ? 'comparator' : 'radix'))
   useEffect(() => {
     const next = serializeFilters(filters, initialYear)
     const keep = new URLSearchParams(window.location.search)
-    const extra = ['mode', 'perf'].filter((k) => keep.has(k)).map((k) => `${k}=${keep.get(k)}`)
+    const extra = ['mode', 'perf', 'engine'].filter((k) => keep.has(k)).map((k) => `${k}=${keep.get(k)}`)
     const qs = next + (extra.length ? (next ? '&' : '?') + extra.join('&') : '')
     if (window.location.search !== qs) window.history.replaceState(null, '', window.location.pathname + qs)
   }, [filters, initialYear])
@@ -58,7 +59,7 @@ export function Dashboard({ index, initialYear, initialAgencyMonth, yearly }: Da
   const data = state.status === 'ready' ? state.data : null
   const yearInfo = years.find((y) => y.year === filters.year) ?? years[0]
 
-  const query = useMemo(() => (data ? toQuery(filters, data.dict) : null), [filters, data])
+  const query = useMemo(() => (data ? { ...toQuery(filters, data.dict), sortStrategy } : null), [filters, data, sortStrategy])
   // Typing in the search box updates the input immediately; the worker query follows.
   const deferredQuery = useDeferredValue(query)
   const { result, stats, pending, error: queryError } = useQuery(client, !!data && !!deferredQuery, String(filters.year), deferredQuery ?? DEFAULT_QUERY)
@@ -98,14 +99,15 @@ export function Dashboard({ index, initialYear, initialAgencyMonth, yearly }: Da
   const matched = result?.ids.length ?? null
 
   return (
-    <div className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-6">
+    <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-6">
       <PageHeader source={index.source} sourceLastModified={yearInfo.sourceLastModified} lastPublished={index.lastPublished} />
 
       {yearInfo.partial && <PartialDataBanner year={yearInfo.year} months={yearInfo.months} />}
 
-      <FilterBar filters={filters} dispatch={dispatch} years={years} dict={data?.dict ?? null} activeCount={chips.length} />
-
-      <KpiTiles totals={view.totals} preview={view.source === 'preview'} />
+      <section aria-label="Filters and headline numbers" className="flex flex-col gap-4">
+        <FilterBar filters={filters} dispatch={dispatch} years={years} dict={data?.dict ?? null} activeCount={chips.length} />
+        <KpiTiles totals={view.totals} preview={view.source === 'preview'} />
+      </section>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
         <AgencyRanking
@@ -163,6 +165,6 @@ export function Dashboard({ index, initialYear, initialAgencyMonth, yearly }: Da
         </p>
       </footer>
       {perf && <PerfOverlay stats={stats} rows={matched} />}
-    </div>
+    </main>
   )
 }
