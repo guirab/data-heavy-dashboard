@@ -79,9 +79,10 @@ export function fromPreAggregates(rows: AgencyMonthRow[], months: [number, numbe
   for (const r of rows) {
     if (r.month < months[0] || r.month > months[1]) continue
     if (r.orgSup === null && !includeNoAgency) continue
-    if (codeSet && (r.orgSup === null || !codeSet.has(r.orgSup))) continue
+    // Ranking ignores the agency filter (emphasis, not isolation); totals and series honour it.
     const cur = byAgency.get(r.orgSup) ?? stat(r.orgSup, r.orgSup === null ? 'No agency (source has none)' : r.name, 0, 0, 0)
     byAgency.set(r.orgSup, stat(r.orgSup, cur.name, cur.empenhado + r.empenhado, cur.liquidado + r.liquidado, cur.pago + r.pago))
+    if (codeSet && (r.orgSup === null || !codeSet.has(r.orgSup))) continue
     const m = byMonth.get(r.month) ?? [0, 0, 0]
     m[0] += r.empenhado
     m[1] += r.liquidado

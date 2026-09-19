@@ -21,7 +21,7 @@ function StaticPreview() {
   const yearInfo = p.index.years.find((y) => y.year === p.initialYear)!
   const view = fromPreAggregates(p.initialAgencyMonth, [1, 12], yearInfo.months, undefined, false)
   return (
-    <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-6" aria-busy="true">
+    <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6" aria-busy="true">
       <PageHeader source={p.index.source} sourceLastModified={yearInfo.sourceLastModified} lastPublished={p.index.lastPublished} />
       <p className="text-sm text-muted-foreground">Fiscal year {p.initialYear}, all agencies. Loading the interactive view…</p>
       <KpiTiles totals={view.totals} preview />

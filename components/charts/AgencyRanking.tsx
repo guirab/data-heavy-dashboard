@@ -69,7 +69,7 @@ export function AgencyRanking({ agencies, previous, previousYear, selectedCodes,
   return (
     <ChartFrame
       title="Which agencies commit money they don't pay?"
-      description={`Gap between committed and paid${metric === 'pct' ? ' as a share of commitments' : ' in reais'}, ${year}. Click a bar to filter by that agency${previousYear ? `; the table view adds ${previousYear} for comparison` : ''}.`}
+      description={`Gap between committed and paid${metric === 'pct' ? ' as a share of commitments' : ' in reais'}, ${year}. Click a bar to filter the rest of the page by that agency${emphasis ? ' (selected agencies are highlighted; the others stay for comparison)' : ''}${previousYear ? `; the table view adds ${previousYear}` : ''}.`}
       summary={summary}
       preview={preview}
       aside={
@@ -122,7 +122,16 @@ export function AgencyRanking({ agencies, previous, previousYear, selectedCodes,
               axisLine={{ stroke: 'var(--viz-axis)' }}
               tickLine={false}
             />
-            <YAxis type="category" dataKey="short" width={190} tick={{ fill: 'var(--foreground)', fontSize: 11 }} axisLine={false} tickLine={false} interval={0} />
+            <YAxis
+              type="category"
+              dataKey="short"
+              width={170}
+              tick={{ fill: 'var(--foreground)', fontSize: 11 }}
+              tickFormatter={(v: string) => (v.length > 26 ? v.slice(0, 25) + '…' : v)}
+              axisLine={false}
+              tickLine={false}
+              interval={0}
+            />
             <ReferenceLine x={0} stroke="var(--viz-axis)" />
             <Tooltip content={RankingTooltip} cursor={{ fill: 'var(--muted)' }} isAnimationActive={false} />
             <Bar

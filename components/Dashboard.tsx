@@ -99,7 +99,7 @@ export function Dashboard({ index, initialYear, initialAgencyMonth, yearly }: Da
   const matched = result?.ids.length ?? null
 
   return (
-    <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-6">
+    <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
       <PageHeader source={index.source} sourceLastModified={yearInfo.sourceLastModified} lastPublished={index.lastPublished} />
 
       {yearInfo.partial && <PartialDataBanner year={yearInfo.year} months={yearInfo.months} />}

@@ -61,6 +61,13 @@ describe('engine on a synthetic slice', () => {
     const r = runQuery(cols, dict, index, q({}))
     expect(Array.from(r.ids)).toEqual([2, 0, 1, 3]) // gaps 700, 600, 0, -50
   })
+  it('ranks agencies against each other even when one is selected', () => {
+    const r = runQuery(cols, dict, index, q({ filters: { orgSup: [2] } }))
+    expect(r.ids.length).toBe(2)
+    expect(r.totals[0]).toBe(750) // only Defesa in totals
+    expect(r.byAgency[1 * 6 + 0]).toBe(1500) // Educação still ranked
+    expect(r.byAgency[2 * 6 + 0]).toBe(750)
+  })
   it('filters by dimension, month range and search (accent-insensitive)', () => {
     expect(runQuery(cols, dict, index, q({ filters: { orgSup: [2] } })).ids.length).toBe(2)
     expect(runQuery(cols, dict, index, q({ months: [2, 3] })).ids.length).toBe(2)

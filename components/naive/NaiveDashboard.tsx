@@ -98,7 +98,7 @@ export function NaiveDashboard({ index, initialYear }: DashboardProps) {
   const chips = activeChips(filters, loaded?.dict ?? null)
 
   return (
-    <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-4 py-6">
+    <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
       <PageHeader source={index.source} sourceLastModified={yearInfo.sourceLastModified} lastPublished={index.lastPublished} />
       <p role="note" className="rounded-md border border-status-warning/50 bg-status-warning/10 px-3 py-2 text-sm">
         <strong>Naive baseline</strong> ({opts.virtual ? 'stage B: virtualized rows, main-thread compute' : 'stage A: plain table, main-thread compute'}

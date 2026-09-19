@@ -1,6 +1,6 @@
 'use client'
 
-import { CalendarClock, Info } from 'lucide-react'
+import { AlertTriangle, CalendarClock, Info } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { formatInt } from '@/lib/data/format'
 
@@ -62,8 +62,13 @@ export function StaleBadge({ sourceLastModified, lastPublished, now = new Date()
   const stale = (ageDays !== null && ageDays > 45) || nextMonthLate
   const label = modified ? `Source updated ${modified.toISOString().slice(0, 10)}` : 'Source date unknown'
   return (
-    <Badge variant={stale ? 'destructive' : 'secondary'} className="gap-1 font-normal" title={stale ? 'A newer monthly file is probably available on the portal; regenerate with pnpm data:download && pnpm data:build' : undefined}>
-      <CalendarClock aria-hidden className="size-3" />
+    <Badge
+      variant="outline"
+      // Status is carried by icon + label in foreground ink; the tinted border is decoration (contrast-safe in both modes).
+      className={stale ? 'gap-1 border-status-critical/60 bg-status-critical/10 font-normal text-foreground' : 'gap-1 font-normal text-foreground'}
+      title={stale ? 'A newer monthly file is probably available on the portal; regenerate with pnpm data:download && pnpm data:build' : undefined}
+    >
+      {stale ? <AlertTriangle aria-hidden className="size-3" /> : <CalendarClock aria-hidden className="size-3" />}
       {label}
       {stale ? ' — may be stale' : ''}
     </Badge>

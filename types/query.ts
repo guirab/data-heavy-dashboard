@@ -29,7 +29,8 @@ export interface QueryResult {
   ids: Uint32Array
   /** Six measures summed over the matched rows. */
   totals: Float64Array
-  /** Measures per órgão superior id: byAgency[id * 6 + measure]. */
+  /** Measures per órgão superior id, over rows matching every filter EXCEPT the agency filter
+   * (so a selected agency is ranked against the others): byAgency[id * 6 + measure]. */
   byAgency: Float64Array
   /** Measures per month (1..12 → index 0..11): byMonth[(m - 1) * 6 + measure]. */
   byMonth: Float64Array

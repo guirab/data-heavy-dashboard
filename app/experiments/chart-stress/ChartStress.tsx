@@ -83,7 +83,7 @@ export function ChartStress() {
   }, [runningAll, results, size])
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6">
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6">
       <h1 className="text-xl font-semibold">Experiment — Recharts under load</h1>
       <p className="text-sm text-muted-foreground">
         Same N points as an SVG scatter through Recharts and as pixels on a canvas. The dashboard&apos;s charts have 36 bars and 3×12 points; this page

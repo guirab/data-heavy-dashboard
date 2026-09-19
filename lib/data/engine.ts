@@ -78,15 +78,22 @@ export function runQuery(cols: Columns, dict: Dictionaries, index: Index, q: Que
   const masks = buildMasks(q, dict)
   const search = searchMasks(q.search, index)
   const [m0, m1] = q.months
-  const filtered = DIMENSIONS.filter((d) => masks[d]).map((d) => [cols[d], masks[d]!] as const)
+  // The agency filter is applied last so the ranking can be aggregated *before* it:
+  // selected agencies are emphasised against the others, not shown alone.
+  const filtered = DIMENSIONS.filter((d) => d !== 'orgSup' && masks[d]).map((d) => [cols[d], masks[d]!] as const)
+  const agencyMask = masks.orgSup ?? null
   const searchCols = search ? SEARCHABLE.map((d) => [cols[d], search[d]!] as const) : null
   const orgSup = cols.orgSup
   const month = cols.month
+  const measureCols = MEASURES.map((m) => cols[m] as Float64Array)
 
-  // 1. filter -> matched ids
+  // 1. filter -> matched ids, aggregating as we go
   const matched = new Uint32Array(rows)
   let n = 0
   let noAgency = 0
+  const totals = new Float64Array(NM)
+  const byAgency = new Float64Array(dict.orgSup.length * NM)
+  const byMonth = new Float64Array(12 * NM)
   for (let r = 0; r < rows; r++) {
     const mo = month[r]
     if (mo < m0 || mo > m1) continue
@@ -102,27 +109,20 @@ export function runQuery(cols: Columns, dict: Dictionaries, index: Index, q: Que
       }
       if (!hit) continue
     }
-    if (!q.includeNoAgency && orgSup[r] === 0) { noAgency++; continue }
+    const agency = orgSup[r]
+    if (!q.includeNoAgency && agency === 0) { noAgency++; continue }
+    const a = agency * NM
+    for (let k = 0; k < NM; k++) byAgency[a + k] += measureCols[k][r]
+    if (agencyMask && !agencyMask[agency]) continue
     matched[n++] = r
-  }
-  const ids = matched.subarray(0, n)
-
-  // 2. aggregate
-  const totals = new Float64Array(NM)
-  const byAgency = new Float64Array(dict.orgSup.length * NM)
-  const byMonth = new Float64Array(12 * NM)
-  const measureCols = MEASURES.map((m) => cols[m] as Float64Array)
-  for (let i = 0; i < n; i++) {
-    const r = ids[i]
-    const a = orgSup[r] * NM
-    const mo = (month[r] - 1) * NM
+    const mb = (mo - 1) * NM
     for (let k = 0; k < NM; k++) {
       const v = measureCols[k][r]
       totals[k] += v
-      byAgency[a + k] += v
-      byMonth[mo + k] += v
+      byMonth[mb + k] += v
     }
   }
+  const ids = matched.subarray(0, n)
 
   // 3. sort
   const sorted = sortIds(ids, cols, index, q, sortStrategy)
