@@ -1,4 +1,4 @@
-import type { ColumnarManifest } from '@/lib/data/columnar'
+import type { ColumnarManifest } from '../lib/data/columnar.ts'
 
 /** Categorical dimensions served per row, in column order. */
 export const DIMENSIONS = [
