@@ -4,7 +4,7 @@
  * resolved against the loaded year's dictionary when the query is built.
  */
 import { DIMENSIONS, type Dictionaries, type Dimension } from '../../types/dataset.ts'
-import { DEFAULT_QUERY, type Query, type SortKey } from '../../types/query.ts'
+import { DEFAULT_QUERY, isSortKey, type Query, type SortKey } from '../../types/query.ts'
 
 export const FILTERABLE: Dimension[] = ['orgSup', 'funcao', 'grupo', 'modalidade', 'uf']
 
@@ -58,7 +58,7 @@ export function parseFilters(search: string, fallbackYear: number, years: number
   f.search = p.get('q') ?? ''
   f.includeNoAgency = p.get('noagency') === '1'
   const s = p.get('sort')?.match(/^([a-zA-Z]+):(asc|desc)$/)
-  if (s) f.sort = { key: s[1] as SortKey, dir: s[2] as 'asc' | 'desc' }
+  if (s && isSortKey(s[1])) f.sort = { key: s[1], dir: s[2] as 'asc' | 'desc' }
   return f
 }
 

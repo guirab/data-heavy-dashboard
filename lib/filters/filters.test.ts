@@ -20,6 +20,14 @@ describe('filters <-> URL', () => {
     expect(f.months).toEqual([1, 12])
     expect(f.sort.key).toBe('gap')
   })
+  it('only accepts sort keys the engine knows (a well-formed unknown key used to crash the worker)', () => {
+    expect(parseFilters('?sort=nope:asc', 2025, years).sort).toEqual({ key: 'gap', dir: 'desc' })
+    expect(parseFilters('?sort=pago:sideways', 2025, years).sort).toEqual({ key: 'gap', dir: 'desc' })
+    expect(parseFilters('?sort=__proto__:asc', 2025, years).sort).toEqual({ key: 'gap', dir: 'desc' })
+    // Measures outside the table columns are still valid engine keys.
+    expect(parseFilters('?sort=rpInscritos:asc', 2025, years).sort).toEqual({ key: 'rpInscritos', dir: 'asc' })
+    expect(parseFilters('?sort=uf:desc', 2025, years).sort).toEqual({ key: 'uf', dir: 'desc' })
+  })
 })
 
 describe('reducer', () => {

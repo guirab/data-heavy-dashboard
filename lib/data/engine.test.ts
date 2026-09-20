@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest'
 import { DIMENSIONS, MEASURES, type Dictionaries, type YearManifest } from '@/types/dataset'
 import { DEFAULT_QUERY, type Query } from '@/types/query'
 import { decodeColumns } from './columnar'
-import { buildIndex, radixSortIndices, runQuery, sortIds, type Columns } from './engine'
+import { buildIndex, EngineError, radixSortIndices, runQuery, sortIds, type Columns } from './engine'
 
 // --- tiny synthetic slice -------------------------------------------------
 const dict: Dictionaries = Object.fromEntries(DIMENSIONS.map((d) => [d, [{ code: null, name: '' }]])) as Dictionaries
@@ -51,6 +51,11 @@ describe('radix sort', () => {
 })
 
 describe('engine on a synthetic slice', () => {
+  it('rejects an unknown sort key with a typed error instead of a TypeError', () => {
+    const bad = { key: 'nope' as Query['sort']['key'], dir: 'asc' as const }
+    expect(() => runQuery(cols, dict, index, q({ sort: bad }))).toThrow(EngineError)
+    expect(() => runQuery(cols, dict, index, q({ sort: bad }))).toThrow('unknown sort key "nope"')
+  })
   it('excludes no-agency rows by default and counts them', () => {
     const r = runQuery(cols, dict, index, q({}))
     expect(r.ids.length).toBe(4)

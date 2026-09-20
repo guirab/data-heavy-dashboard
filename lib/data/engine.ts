@@ -10,6 +10,15 @@ import type { Query, QueryResult } from '../../types/query.ts'
 
 export type Columns = Record<string, TypedColumn>
 
+/** A query the engine cannot run (bad sort key, …); the worker reports it as kind 'engine'. */
+export class EngineError extends Error {
+  readonly kind = 'engine' as const
+  constructor(message: string) {
+    super(message)
+    this.name = 'EngineError'
+  }
+}
+
 /** Dimensions whose names take part in free-text search. */
 export const SEARCHABLE: Dimension[] = ['orgSup', 'orgSub', 'programa', 'acao', 'po', 'elemento']
 
@@ -144,6 +153,7 @@ function sortKeys(ids: Uint32Array, cols: Columns, index: Index, key: Query['sor
   } else {
     const c = cols[key]
     const rank = index.rank[key as Dimension]
+    if (!c || !rank) throw new EngineError(`unknown sort key "${key}"`)
     for (let i = 0; i < n; i++) keys[i] = rank[c[ids[i]]]
   }
   return keys

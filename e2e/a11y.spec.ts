@@ -140,3 +140,12 @@ test('keyboard: Tab and Shift+Tab leave the grid in both directions (no trap)', 
   expect(await inGrid()).toBe(false)
   await expect(page.getByRole('link', { name: 'data dictionary' })).toBeFocused()
 })
+
+test('url state: an unknown sort key falls back to the default and the URL heals itself', async ({ page }) => {
+  await page.goto('/?sort=nope:asc&months=3-9')
+  await gridReady(page)
+  await expect(page).toHaveURL(/months=3-9/)
+  await expect(page).not.toHaveURL(/sort=/)
+  await expect(page.getByRole('columnheader', { name: 'Gap' })).toHaveAttribute('aria-sort', 'descending')
+  await expect(alertPanel(page)).toHaveCount(0)
+})

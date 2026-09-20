@@ -1,6 +1,9 @@
-import type { Dimension, Measure } from './dataset.ts'
+import { DIMENSIONS, MEASURES, type Dimension, type Measure } from './dataset.ts'
 
 export type SortKey = Dimension | Measure | 'gap' | 'month'
+/** Every key the engine can sort by; the URL parser validates against this list. */
+export const SORT_KEYS: readonly SortKey[] = [...DIMENSIONS, ...MEASURES, 'gap', 'month']
+export const isSortKey = (s: string): s is SortKey => (SORT_KEYS as readonly string[]).includes(s)
 
 export interface Query {
   /** Selected dictionary ids per dimension; absent or empty = no filter. */
