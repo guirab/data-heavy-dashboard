@@ -28,12 +28,24 @@ export class DatasetError extends Error {
   }
 }
 
+/** Rejection message for requests made obsolete by a newer load or a restart; callers ignore it. */
+export const SUPERSEDED = 'superseded'
+
+export interface LoadOptions {
+  /** Bypass the HTTP cache (Retry after a checksum or network failure). */
+  reload?: boolean
+}
+
 export class DatasetClient {
-  private worker: Worker
+  private worker!: Worker
   private nextId = 1
   private pending = new Map<number, Pending>()
 
   constructor() {
+    this.spawn()
+  }
+
+  private spawn() {
     this.worker = new Worker(new URL('./worker/dataset.worker.ts', import.meta.url))
     this.worker.onmessage = (ev: MessageEvent<WorkerResponse>) => this.onMessage(ev.data)
     this.worker.onerror = (ev) => {
@@ -44,6 +56,18 @@ export class DatasetClient {
 
   private send(req: WorkerRequest) {
     this.worker.postMessage(req)
+  }
+
+  private supersedeAll() {
+    for (const p of this.pending.values()) p.reject(new DatasetError('engine', SUPERSEDED))
+    this.pending.clear()
+  }
+
+  /** Kill the worker — crashed, wedged or just holding bad state — and start a fresh one. */
+  restart() {
+    this.worker.terminate()
+    this.supersedeAll()
+    this.spawn()
   }
 
   private onMessage(msg: WorkerResponse) {
@@ -61,16 +85,13 @@ export class DatasetClient {
     if (msg.type === 'result' && p.type === 'query') return p.resolve(msg.result)
   }
 
-  load(year: number, onProgress?: (p: LoadProgress) => void): Promise<LoadedYearView> {
+  load(year: number, onProgress?: (p: LoadProgress) => void, opts: LoadOptions = {}): Promise<LoadedYearView> {
     // A new load makes every in-flight request stale.
-    for (const [id, p] of this.pending) {
-      p.reject(new DatasetError('engine', 'superseded'))
-      this.pending.delete(id)
-    }
+    this.supersedeAll()
     const id = this.nextId++
     return new Promise((resolve, reject) => {
       this.pending.set(id, { type: 'load', resolve, reject, onProgress, year })
-      this.send({ id, type: 'load', year })
+      this.send({ id, type: 'load', year, reload: opts.reload })
     })
   }
 

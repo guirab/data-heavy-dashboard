@@ -19,10 +19,10 @@ export class DatasetLoadError extends Error {
 export const dataUrl = (year: number, file: string) => `/data/v1/${year}/${file}`
 
 /** fetch() rejects with a bare TypeError when the network is down; give it a kind. */
-async function get(url: string): Promise<Response> {
+async function get(url: string, init?: RequestInit): Promise<Response> {
   let res: Response
   try {
-    res = await fetch(url)
+    res = await fetch(url, init)
   } catch (e) {
     throw new DatasetLoadError('network', `${url}: ${e instanceof Error ? e.message : String(e)}`)
   }
@@ -30,8 +30,8 @@ async function get(url: string): Promise<Response> {
   return res
 }
 
-async function fetchJson<T>(url: string): Promise<T> {
-  const res = await get(url)
+async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
+  const res = await get(url, init)
   try {
     return (await res.json()) as T
   } catch (e) {
@@ -39,8 +39,8 @@ async function fetchJson<T>(url: string): Promise<T> {
   }
 }
 
-async function fetchBytes(url: string, total: number, onProgress: (loaded: number) => void): Promise<Uint8Array> {
-  const res = await get(url)
+async function fetchBytes(url: string, total: number, onProgress: (loaded: number) => void, init?: RequestInit): Promise<Uint8Array> {
+  const res = await get(url, init)
   if (!res.body) throw new DatasetLoadError('network', `${url}: empty body`)
   const reader = res.body.getReader()
   const chunks: Uint8Array[] = []
@@ -88,8 +88,15 @@ export interface LoadedYear {
   timings: Partial<Record<LoadProgress['phase'], number>>
 }
 
-export async function loadYear(year: number, onProgress: (p: LoadProgress) => void, opts: { verify?: boolean } = {}): Promise<LoadedYear> {
+export interface LoadYearOptions {
+  verify?: boolean
+  /** Bypass the HTTP cache: a Retry after a checksum mismatch must not get the same bytes back. */
+  reload?: boolean
+}
+
+export async function loadYear(year: number, onProgress: (p: LoadProgress) => void, opts: LoadYearOptions = {}): Promise<LoadedYear> {
   const timings: LoadedYear['timings'] = {}
+  const init: RequestInit | undefined = opts.reload ? { cache: 'reload' } : undefined
   const mark = async <T>(phase: LoadProgress['phase'], loaded: number, total: number, fn: () => Promise<T> | T): Promise<T> => {
     onProgress({ phase, loaded, total })
     const t = performance.now()
@@ -98,10 +105,10 @@ export async function loadYear(year: number, onProgress: (p: LoadProgress) => vo
     return v
   }
 
-  const manifest = await mark('manifest', 0, 0, () => fetchJson<YearManifest>(dataUrl(year, 'manifest.json')))
+  const manifest = await mark('manifest', 0, 0, () => fetchJson<YearManifest>(dataUrl(year, 'manifest.json'), init))
   const total = manifest.columnsGzipBytes
-  const dict = await mark('dictionary', 0, total, () => fetchJson<Dictionaries>(dataUrl(year, 'dict.json')))
-  const gz = await mark('columns', 0, total, () => fetchBytes(dataUrl(year, 'columns.bin.gz'), total, (loaded) => onProgress({ phase: 'columns', loaded, total })))
+  const dict = await mark('dictionary', 0, total, () => fetchJson<Dictionaries>(dataUrl(year, 'dict.json'), init))
+  const gz = await mark('columns', 0, total, () => fetchBytes(dataUrl(year, 'columns.bin.gz'), total, (loaded) => onProgress({ phase: 'columns', loaded, total }), init))
   if (opts.verify !== false && gz[0] === 0x1f && gz[1] === 0x8b) {
     const digest = await mark('verify', total, total, async () => hex(await crypto.subtle.digest('SHA-256', gz as BufferSource)))
     if (digest !== manifest.columnsSha256) {

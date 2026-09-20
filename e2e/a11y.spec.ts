@@ -56,11 +56,18 @@ test('error state: network failure keeps the summary and offers retry', async ({
   await gridReady(page)
 })
 
-test('error state: checksum mismatch is reported as integrity, not network', async ({ page }) => {
-  await page.route(COLUMNS, (route) => route.fulfill({ status: 200, contentType: 'application/gzip', body: Buffer.from([0x1f, 0x8b, 0x08, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]) }))
+test('error state: checksum mismatch is reported as integrity, not network; retry gets fresh bytes', async ({ page }) => {
+  let corrupt = true
+  await page.route(COLUMNS, (route) => (corrupt ? route.fulfill({ status: 200, contentType: 'application/gzip', body: Buffer.from([0x1f, 0x8b, 0x08, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3]) }) : route.continue()))
   await page.goto('/')
-  await expect(alertPanel(page)).toContainText('checksum')
+  const alert = alertPanel(page)
+  await expect(alert).toContainText('checksum')
   await axe(page, 'error-integrity')
+  // Retry starts a fresh worker and re-downloads (cache: 'reload'); the good file now loads.
+  corrupt = false
+  await alert.getByRole('button', { name: 'Retry' }).click()
+  await gridReady(page)
+  await expect(alertPanel(page)).toHaveCount(0)
 })
 
 test('empty-filter state names the filters and can undo the last one', async ({ page }) => {

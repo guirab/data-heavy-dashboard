@@ -237,7 +237,7 @@ block LCP because the headline tiles are static HTML. Details in [docs/perf.md](
 | State | What it means here | Where |
 | --- | --- | --- |
 | Loading | Pre-aggregated headline numbers are in the HTML; the 3.5 MB slice then downloads with a byte-progress bar and a phase label (download → checksum → inflate → decode → index). | `components/states/LoadingProgress.tsx` |
-| Error | Network, checksum mismatch, malformed file, worker crash — each with its own copy and a Retry that reloads inside the same worker. The summary above stays. | `components/states/ErrorPanel.tsx` |
+| Error | Network, checksum mismatch, malformed file, worker crash — each with its own copy and a Retry that terminates the worker, starts a fresh one and reloads the year bypassing the HTTP cache (`cache: 'reload'`). The summary above stays. | `components/states/ErrorPanel.tsx` |
 | Empty filter | "0 of 328,263 lines match", the active filters, and **Remove last filter** (search first, then the most recent dimension, then months). Charts keep their axes. | `components/states/EmptyFilter.tsx` |
 | Partial data | 2026 has 9 of 12 months (banner: not comparable to a closed year); 12,508 lines in 2025 have no agency in the source (DEF-05) and are excluded from rankings with a one-click include; truncated names carry a ‡ and a tooltip. | `components/states/Banners.tsx` |
 | Stale data | The badge shows the source's `Last-Modified` and turns when the file is older than 45 days or the next expected monthly file is late. | `components/states/Banners.tsx` |

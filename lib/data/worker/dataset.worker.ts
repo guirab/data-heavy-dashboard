@@ -18,7 +18,7 @@ self.onmessage = async (ev: MessageEvent<WorkerRequest>) => {
   try {
     if (req.type === 'load') {
       state = null
-      const loaded = await loadYear(req.year, (progress) => post({ id: req.id, type: 'progress', progress }))
+      const loaded = await loadYear(req.year, (progress) => post({ id: req.id, type: 'progress', progress }), { reload: req.reload })
       const t = performance.now()
       const index = buildIndex(loaded.dict)
       loaded.timings.index = performance.now() - t

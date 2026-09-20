@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState, useSyncExternalStore } from 'react'
-import { DatasetClient, DatasetError, type LoadedYearView } from '@/lib/data/client'
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
+import { DatasetClient, DatasetError, SUPERSEDED, type LoadedYearView } from '@/lib/data/client'
 import type { LoadProgress, Query, QueryResult } from '@/types/query'
 
 export type DatasetState =
@@ -35,10 +35,11 @@ export function useYear(client: DatasetClient | null, year: number) {
     let alive = true
     const put = (state: DatasetState) => alive && setSlot({ year, attempt, state })
     client
-      .load(year, (progress) => put({ status: 'loading', year, progress }))
+      // A retry (attempt > 0) bypasses the HTTP cache: the bytes we had were bad or missing.
+      .load(year, (progress) => put({ status: 'loading', year, progress }), { reload: attempt > 0 })
       .then((data) => put({ status: 'ready', year, data }))
       .catch((e: DatasetError) => {
-        if (e.message !== 'superseded') put({ status: 'error', year, error: e })
+        if (e.message !== SUPERSEDED) put({ status: 'error', year, error: e })
       })
     return () => {
       alive = false
@@ -47,7 +48,13 @@ export function useYear(client: DatasetClient | null, year: number) {
 
   // A slot for another year (or attempt) is stale: report "loading" until the new one lands.
   const state: DatasetState = slot && slot.year === year && slot.attempt === attempt ? slot.state : { status: 'loading', year, progress: null }
-  return { state, retry: () => setAttempt((a) => a + 1) }
+  // Retry throws the worker away: a crashed one never answers again, and an engine failure may
+  // have left it holding bad state. The fresh worker reloads the year.
+  const retry = useCallback(() => {
+    client?.restart()
+    setAttempt((a) => a + 1)
+  }, [client])
+  return { state, retry }
 }
 
 export interface QueryStats {
@@ -79,8 +86,12 @@ export function useQuery(client: DatasetClient | null, ready: boolean, scope: st
     const t0 = performance.now()
     client
       .query(JSON.parse(key.slice(key.indexOf('|') + 1)) as Query)
-      .then((result) => alive && setResolved({ key, result, stats: { engineMs: result.engineMs, roundTripMs: performance.now() - t0 } }))
-      .catch((e: DatasetError) => alive && e.message !== 'superseded' && setError({ key, error: e }))
+      .then((result) => {
+        if (!alive) return
+        setResolved({ key, result, stats: { engineMs: result.engineMs, roundTripMs: performance.now() - t0 } })
+        setError(null) // a retried query that now succeeds clears its own error
+      })
+      .catch((e: DatasetError) => alive && e.message !== SUPERSEDED && setError({ key, error: e }))
     return () => {
       alive = false
     }

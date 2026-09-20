@@ -6,10 +6,10 @@ import type { DatasetError } from '@/lib/data/client'
 
 const KIND_LABEL: Record<DatasetError['kind'], { title: string; hint: string }> = {
   network: { title: 'Could not download the dataset', hint: 'The static files did not arrive. Check the connection and retry; the summary above is still valid.' },
-  integrity: { title: 'Downloaded file failed its checksum', hint: 'The bytes do not match the manifest hash — a truncated or cached-but-changed file. Retrying re-downloads it.' },
+  integrity: { title: 'Downloaded file failed its checksum', hint: 'The bytes do not match the manifest hash — a truncated or cached-but-changed file. Retry downloads it again, bypassing the browser cache.' },
   format: { title: 'Dataset file has an unexpected shape', hint: 'The columnar file and its manifest disagree. This is a build problem, not a network one; retrying will not help.' },
-  engine: { title: 'The query engine failed', hint: 'The worker threw while filtering or sorting. Retry reloads the year in a fresh worker.' },
-  worker: { title: 'The data worker crashed', hint: 'Usually the browser ran out of memory for this tab. Retry reloads the year.' },
+  engine: { title: 'The query engine failed', hint: 'The worker threw while filtering or sorting. Retry starts a fresh worker and reloads the year.' },
+  worker: { title: 'The data worker crashed', hint: 'Usually the browser ran out of memory for this tab. Retry starts a fresh worker and reloads the year; if it fails again, reload the page.' },
 }
 
 interface ErrorPanelProps {
