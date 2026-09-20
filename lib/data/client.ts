@@ -34,6 +34,8 @@ export const SUPERSEDED = 'superseded'
 export interface LoadOptions {
   /** Bypass the HTTP cache (Retry after a checksum or network failure). */
   reload?: boolean
+  /** Content hash for immutable data URLs (lib/data/urls.ts). */
+  version?: string
 }
 
 export class DatasetClient {
@@ -91,7 +93,7 @@ export class DatasetClient {
     const id = this.nextId++
     return new Promise((resolve, reject) => {
       this.pending.set(id, { type: 'load', resolve, reject, onProgress, year })
-      this.send({ id, type: 'load', year, reload: opts.reload })
+      this.send({ id, type: 'load', year, reload: opts.reload, version: opts.version })
     })
   }
 

@@ -15,12 +15,22 @@ import { LoadingProgress } from '@/components/states/LoadingProgress'
 import { useDatasetClient, useQuery, useYear } from '@/hooks/useDataset'
 import { fromPreAggregates, fromResult, type AgencyMonthRow, type AgencyStat } from '@/lib/data/aggregates'
 import { formatInt } from '@/lib/data/format'
+import { dataUrl } from '@/lib/data/urls'
 import { activeChips, filtersReducer, parseFilters, serializeFilters, toQuery, type FilterAction } from '@/lib/filters/filters'
 import { markInteraction } from '@/lib/perf'
 import { DEFAULT_QUERY } from '@/types/query'
 
 export interface DataIndex {
-  years: Array<{ year: number; months: number[]; partial: boolean; rows: number; rawRows: number; sourceLastModified: string | null }>
+  years: Array<{
+    year: number
+    months: number[]
+    partial: boolean
+    rows: number
+    rawRows: number
+    sourceLastModified: string | null
+    /** Build-time content hash of the year's files; makes their URLs immutable (lib/data/urls.ts). */
+    version: string
+  }>
   lastPublished: { year: number; month: number }
   source: { name: string; publisher: string; page: string; dictionary: string }
 }
@@ -54,10 +64,10 @@ export function Dashboard({ index, initialYear, initialAgencyMonth, yearly }: Da
     rawDispatch(a)
   }, [])
 
-  const client = useDatasetClient()
-  const { state, retry } = useYear(client, filters.year)
-  const data = state.status === 'ready' ? state.data : null
   const yearInfo = years.find((y) => y.year === filters.year) ?? years[0]
+  const client = useDatasetClient()
+  const { state, retry } = useYear(client, filters.year, yearInfo.version)
+  const data = state.status === 'ready' ? state.data : null
 
   const query = useMemo(() => (data ? { ...toQuery(filters, data.dict), sortStrategy } : null), [filters, data, sortStrategy])
   // Typing in the search box updates the input immediately; the worker query follows.
@@ -69,14 +79,14 @@ export function Dashboard({ index, initialYear, initialAgencyMonth, yearly }: Da
   useEffect(() => {
     if (preAgg.year === filters.year) return
     let alive = true
-    fetch(`/data/v1/${filters.year}/agg/agency-month.json`)
+    fetch(dataUrl(filters.year, 'agg/agency-month.json', yearInfo.version))
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
       .then((rows: AgencyMonthRow[]) => alive && setPreAgg({ year: filters.year, rows }))
       .catch(() => {})
     return () => {
       alive = false
     }
-  }, [filters.year, preAgg.year])
+  }, [filters.year, preAgg.year, yearInfo.version])
 
   const view = useMemo(() => {
     if (result && data) return fromResult(result, data.dict, filters.months, yearInfo.months)

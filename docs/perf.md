@@ -116,6 +116,48 @@ not be an option, and if such a view is ever added it goes to uPlot or a raw can
 would not be a Recharts chart with more props.
 <!-- chart-stress:end -->
 
+## Data delivery
+
+`pnpm perf:load` measures the page load itself, per device profile, with the browser's HTTP
+cache empty (cold) and on a second navigation (warm): when the first request for a data
+file leaves, when the 3.5 MB columns file has landed, and when the first grid rows are in
+the DOM. The fetches run inside the worker, so the script listens to Playwright's request
+events rather than the document's Resource Timing. Current numbers are in
+[perf-load.md](perf-load.md); the table below is the before/after of the delivery changes
+(3 runs, medians, `next start` on localhost — the "mobile" row is CDP-throttled to
+Lighthouse's slow 4G / 4× CPU preset):
+
+| Profile | | First /data request | Columns downloaded | Cold: first rows | Warm: first rows |
+| --- | --- | --- | --- | --- | --- |
+| Desktop, no throttling | before | 323 ms | 406 ms | 932 ms | 877 ms |
+| | **after** | **15 ms** | **346 ms** | **903 ms** | **862 ms** |
+| Mobile, 4× CPU slowdown, slow 4G | before | 3895 ms | 23805 ms | 24687 ms | 1859 ms |
+| | **after** | **178 ms** | **22270 ms** | **22880 ms** | **1449 ms** |
+
+Before, the first data byte could not move until three waves of JavaScript had run
+(page chunk → dynamic dashboard chunk → worker) and the worker had fetched `manifest.json`
+and `dict.json` one after the other. Three changes:
+
+1. **`<link rel="preload" as="fetch">` in the prerendered `<head>`** for the default year's
+   manifest, dictionary and columns (`components/PreloadData.tsx`, via `ReactDOM.preload`),
+   so the downloads start with the HTML parse. The columns file is `fetchpriority=low` so it
+   does not starve the JS chunks on a slow link.
+2. **Immutable data URLs.** The pipeline writes fixed file names (CI diffs them), so the page
+   appends `?v=<content hash>` computed at build time and `next.config.ts` serves those
+   with `Cache-Control: public, max-age=31536000, immutable` (bare URLs stay
+   `must-revalidate`). The worker's `fetch()` then joins or reads the entry the preload
+   created — the byte count over the wire is unchanged, so nothing is downloaded twice —
+   and a revisit skips the three revalidation round trips.
+3. **`dict.json` and `columns.bin.gz` download in parallel** (`Promise.all` after the
+   manifest, which carries the byte total and the checksum).
+
+What the numbers say: the first data request moves from 323 ms to 15 ms on desktop and from
+3.9 s to 0.18 s on slow 4G, and the warm mobile load drops 22%. The cold mobile load drops
+only 7%, because on a 1.6 Mbps link the 3.5 MB payload is the ceiling (~18 s of transfer),
+not the latency — the next step there is a smaller slice (lazy columns, or splitting the
+dictionaries by dimension), not more hints. Localhost desktop barely moves for the opposite
+reason: with no network cost, decode + index inside the worker dominates the 0.9 s.
+
 ## Lighthouse
 
 <!-- lighthouse:start -->
@@ -140,6 +182,8 @@ vary by a few points between runs (87–90 observed); desktop is stable.
 ```bash
 pnpm build && pnpm start -p 3100 &
 pnpm perf:measure 5        # writes docs/perf-results.md and docs/perf-results.json
+pnpm perf:load 3           # cold/warm load per device profile → docs/perf-load.md
+PERF_PROFILE=mobile PERF_MODES=D pnpm perf:measure 5   # interactions under 4× CPU + slow 4G → docs/perf-results-mobile.md
 pnpm perf:bench 2025       # engine-only numbers in Node
 pnpm readme:perf           # copies the results table into the README
 ```

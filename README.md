@@ -199,6 +199,14 @@ Three SVG nodes per point and linear growth: fine for 36 bars, not an option for
 "every budget line over time" view. That view was not built; uPlot or a raw canvas is the
 named replacement if it ever is.
 
+**Data delivery.** The three data files are `<link rel="preload">`ed from the prerendered
+`<head>` and served under content-hashed `?v=` URLs with `Cache-Control: immutable`, and
+the dictionary and columns download in parallel. Measured with `pnpm perf:load` (cold cache,
+medians of 3): the first data request leaves at **15 ms** instead of 323 ms on desktop and
+at **0.18 s** instead of 3.9 s on slow 4G; a warm mobile load drops from 1.86 s to 1.45 s.
+The cold slow-4G load only improves 7% (24.7 → 22.9 s) because the 3.5 MB slice is the
+ceiling there, not the latency — see [docs/perf.md](docs/perf.md#data-delivery).
+
 **Lighthouse** (13.5, production build, localhost, `pnpm perf:lighthouse`, reports in
 `docs/lighthouse-*.json`): desktop **100 / 100 / 100 / 100** (FCP 0.2 s, LCP 0.6 s,
 TBT 40 ms, CLS 0); mobile preset **90** performance (LCP 2.1 s, TBT 370 ms; 87–90 across

@@ -26,7 +26,7 @@ interface YearSlot {
   state: DatasetState
 }
 
-export function useYear(client: DatasetClient | null, year: number) {
+export function useYear(client: DatasetClient | null, year: number, version?: string) {
   const [attempt, setAttempt] = useState(0)
   const [slot, setSlot] = useState<YearSlot | null>(null)
 
@@ -36,7 +36,7 @@ export function useYear(client: DatasetClient | null, year: number) {
     const put = (state: DatasetState) => alive && setSlot({ year, attempt, state })
     client
       // A retry (attempt > 0) bypasses the HTTP cache: the bytes we had were bad or missing.
-      .load(year, (progress) => put({ status: 'loading', year, progress }), { reload: attempt > 0 })
+      .load(year, (progress) => put({ status: 'loading', year, progress }), { reload: attempt > 0, version })
       .then((data) => put({ status: 'ready', year, data }))
       .catch((e: DatasetError) => {
         if (e.message !== SUPERSEDED) put({ status: 'error', year, error: e })
@@ -44,7 +44,7 @@ export function useYear(client: DatasetClient | null, year: number) {
     return () => {
       alive = false
     }
-  }, [client, year, attempt])
+  }, [client, year, version, attempt])
 
   // A slot for another year (or attempt) is stale: report "loading" until the new one lands.
   const state: DatasetState = slot && slot.year === year && slot.attempt === attempt ? slot.state : { status: 'loading', year, progress: null }

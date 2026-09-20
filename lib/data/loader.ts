@@ -7,6 +7,7 @@ import { gunzipSync } from 'fflate'
 import type { Dictionaries, YearManifest } from '../../types/dataset.ts'
 import type { LoadProgress } from '../../types/query.ts'
 import { decodeColumns, type TypedColumn } from './columnar.ts'
+import { dataUrl } from './urls.ts'
 
 export class DatasetLoadError extends Error {
   readonly kind: 'network' | 'integrity' | 'format'
@@ -15,8 +16,6 @@ export class DatasetLoadError extends Error {
     this.kind = kind
   }
 }
-
-export const dataUrl = (year: number, file: string) => `/data/v1/${year}/${file}`
 
 /** fetch() rejects with a bare TypeError when the network is down; give it a kind. */
 async function get(url: string, init?: RequestInit): Promise<Response> {
@@ -92,11 +91,14 @@ export interface LoadYearOptions {
   verify?: boolean
   /** Bypass the HTTP cache: a Retry after a checksum mismatch must not get the same bytes back. */
   reload?: boolean
+  /** Content hash for immutable URLs; without it the files are revalidated on every load. */
+  version?: string
 }
 
 export async function loadYear(year: number, onProgress: (p: LoadProgress) => void, opts: LoadYearOptions = {}): Promise<LoadedYear> {
   const timings: LoadedYear['timings'] = {}
   const init: RequestInit | undefined = opts.reload ? { cache: 'reload' } : undefined
+  const url = (file: string) => dataUrl(year, file, opts.version)
   const mark = async <T>(phase: LoadProgress['phase'], loaded: number, total: number, fn: () => Promise<T> | T): Promise<T> => {
     onProgress({ phase, loaded, total })
     const t = performance.now()
@@ -105,10 +107,14 @@ export async function loadYear(year: number, onProgress: (p: LoadProgress) => vo
     return v
   }
 
-  const manifest = await mark('manifest', 0, 0, () => fetchJson<YearManifest>(dataUrl(year, 'manifest.json'), init))
+  // The manifest goes first (it carries the byte total for the progress bar and the checksum);
+  // the dictionary and the columns file are independent, so they download together.
+  const manifest = await mark('manifest', 0, 0, () => fetchJson<YearManifest>(url('manifest.json'), init))
   const total = manifest.columnsGzipBytes
-  const dict = await mark('dictionary', 0, total, () => fetchJson<Dictionaries>(dataUrl(year, 'dict.json'), init))
-  const gz = await mark('columns', 0, total, () => fetchBytes(dataUrl(year, 'columns.bin.gz'), total, (loaded) => onProgress({ phase: 'columns', loaded, total }), init))
+  const [dict, gz] = await Promise.all([
+    mark('dictionary', 0, total, () => fetchJson<Dictionaries>(url('dict.json'), init)),
+    mark('columns', 0, total, () => fetchBytes(url('columns.bin.gz'), total, (loaded) => onProgress({ phase: 'columns', loaded, total }), init)),
+  ])
   if (opts.verify !== false && gz[0] === 0x1f && gz[1] === 0x8b) {
     const digest = await mark('verify', total, total, async () => hex(await crypto.subtle.digest('SHA-256', gz as BufferSource)))
     if (digest !== manifest.columnsSha256) {

@@ -3,42 +3,42 @@
     "profile": "desktop",
     "cold": [
       {
-        "firstDataRequestMs": 325,
-        "columnsDoneMs": 420,
-        "firstRowsMs": 938,
-        "dataTransferBytes": 3883083
-      },
-      {
-        "firstDataRequestMs": 320,
-        "columnsDoneMs": 406,
+        "firstDataRequestMs": 20,
+        "columnsDoneMs": 349,
         "firstRowsMs": 898,
-        "dataTransferBytes": 3883083
+        "dataTransferBytes": 3881641
       },
       {
-        "firstDataRequestMs": 323,
-        "columnsDoneMs": 390,
-        "firstRowsMs": 932,
-        "dataTransferBytes": 3883083
+        "firstDataRequestMs": 14,
+        "columnsDoneMs": 346,
+        "firstRowsMs": 903,
+        "dataTransferBytes": 3881641
+      },
+      {
+        "firstDataRequestMs": 15,
+        "columnsDoneMs": 339,
+        "firstRowsMs": 910,
+        "dataTransferBytes": 3881641
       }
     ],
     "warm": [
       {
-        "firstDataRequestMs": 315,
-        "columnsDoneMs": 351,
-        "firstRowsMs": 867,
-        "dataTransferBytes": 0
+        "firstDataRequestMs": 28,
+        "columnsDoneMs": 333,
+        "firstRowsMs": 862,
+        "dataTransferBytes": -2884
       },
       {
-        "firstDataRequestMs": 314,
-        "columnsDoneMs": 354,
-        "firstRowsMs": 878,
-        "dataTransferBytes": 0
+        "firstDataRequestMs": 27,
+        "columnsDoneMs": 332,
+        "firstRowsMs": 858,
+        "dataTransferBytes": -2884
       },
       {
-        "firstDataRequestMs": 314,
-        "columnsDoneMs": 354,
+        "firstDataRequestMs": 31,
+        "columnsDoneMs": 332,
         "firstRowsMs": 877,
-        "dataTransferBytes": 0
+        "dataTransferBytes": -2884
       }
     ]
   },
@@ -46,42 +46,42 @@
     "profile": "mobile",
     "cold": [
       {
-        "firstDataRequestMs": 3895,
-        "columnsDoneMs": 23805,
-        "firstRowsMs": 24687,
-        "dataTransferBytes": 3883083
+        "firstDataRequestMs": 181,
+        "columnsDoneMs": 22217,
+        "firstRowsMs": 22880,
+        "dataTransferBytes": 3881641
       },
       {
-        "firstDataRequestMs": 3909,
-        "columnsDoneMs": 23819,
-        "firstRowsMs": 24865,
-        "dataTransferBytes": 3883083
+        "firstDataRequestMs": 177,
+        "columnsDoneMs": 22270,
+        "firstRowsMs": 23258,
+        "dataTransferBytes": 3881641
       },
       {
-        "firstDataRequestMs": 3895,
-        "columnsDoneMs": 23802,
-        "firstRowsMs": 24630,
-        "dataTransferBytes": 3883083
+        "firstDataRequestMs": 178,
+        "columnsDoneMs": 22283,
+        "firstRowsMs": 22850,
+        "dataTransferBytes": 3881641
       }
     ],
     "warm": [
       {
-        "firstDataRequestMs": 430,
-        "columnsDoneMs": 933,
-        "firstRowsMs": 1859,
-        "dataTransferBytes": 0
+        "firstDataRequestMs": 220,
+        "columnsDoneMs": 521,
+        "firstRowsMs": 1449,
+        "dataTransferBytes": -2884
       },
       {
-        "firstDataRequestMs": 440,
-        "columnsDoneMs": 932,
-        "firstRowsMs": 1872,
-        "dataTransferBytes": 0
+        "firstDataRequestMs": 188,
+        "columnsDoneMs": 510,
+        "firstRowsMs": 1426,
+        "dataTransferBytes": -2884
       },
       {
-        "firstDataRequestMs": 398,
-        "columnsDoneMs": 903,
-        "firstRowsMs": 1823,
-        "dataTransferBytes": 0
+        "firstDataRequestMs": 219,
+        "columnsDoneMs": 551,
+        "firstRowsMs": 1502,
+        "dataTransferBytes": -2884
       }
     ]
   }
