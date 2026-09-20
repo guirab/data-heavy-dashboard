@@ -32,13 +32,6 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
  */
 const BACKOFF_MS = [10_000, 30_000, 60_000, 120_000]
 
-/**
- * Byte-identical mirror of the source zips as GitHub release assets, used only when
- * the portal refuses (it blocks a client after ~25 consecutive downloads). A mirrored
- * file is accepted only if its SHA-256 matches the manifest entry recorded from the portal.
- */
-export const MIRROR = 'https://github.com/guirab/data-heavy-dashboard/releases/download/source-2026-09'
-
 async function fetchWithRetry(url: string, label: string, attempts = BACKOFF_MS.length + 1): Promise<{ buf: Buffer; lastModified: string | null }> {
   let lastError: Error | null = null
   for (let i = 0; i < attempts; i++) {
@@ -101,17 +94,10 @@ async function fetchMonth(year: number, month: number, manifest: SourceManifest)
       return
     }
   }
-  let fetched: { buf: Buffer; lastModified: string | null }
-  try {
-    fetched = await fetchWithRetry(url, p)
-  } catch (portalError) {
-    if (!existing) throw portalError
-    console.log(`  ${p}  portal refused (${(portalError as Error).message.split(' from ')[0]}); trying the mirror`)
-    const mirrored = await fetchWithRetry(`${MIRROR}/${file.split('/').pop()}`, `${p} (mirror)`, 2)
-    if (sha256(mirrored.buf) !== existing.sha256) throw new Error(`${p}: mirrored file does not match the manifest sha256`)
-    fetched = { buf: mirrored.buf, lastModified: existing.sourceLastModified }
-  }
-  const { buf, lastModified } = fetched
+  // The portal blocks a client after ~25 consecutive files (HTTP 405) for several
+  // minutes. The run is resumable: files already on disk are kept, so rerunning later
+  // finishes the job. CI avoids the limit by downloading each year on its own runner.
+  const { buf, lastModified } = await fetchWithRetry(url, p)
   if (buf.length < 1000 || buf[0] !== 0x50 || buf[1] !== 0x4b) throw new Error(`${p}: response is not a zip (${buf.length} bytes)`)
   fs.writeFileSync(file, buf)
   const entry: ManifestEntry = {
