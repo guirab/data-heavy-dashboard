@@ -4,15 +4,20 @@
  * results table to docs/perf-results.md (included by docs/perf.md).
  *
  * Usage: pnpm build && pnpm start -p 3100 &  then  pnpm perf:measure [runs]
+ *        PERF_PROFILE=mobile PERF_MODES=D pnpm perf:measure 5   (throttled; writes perf-results-mobile.*)
  */
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { chromium, type Page } from '@playwright/test'
+import { applyProfile, profileFromEnv } from './profile.ts'
 
 const BASE = process.env.PERF_BASE ?? 'http://localhost:3100'
 const RUNS = Number(process.argv[2] ?? 5)
 const ROOT = path.resolve(import.meta.dirname, '../..')
+const PROFILE = profileFromEnv()
+/** PERF_MODES=C,D limits the run to those modes (the naive baselines take minutes under throttling). */
+const ONLY = process.env.PERF_MODES?.split(',').map((m) => m.trim())
 
 interface Mode {
   id: string
@@ -86,7 +91,8 @@ async function measureMode(mode: Mode): Promise<{ samples: Sample[]; loadMs: num
   let failed: string | null = null
   try {
     for (let run = 0; run < RUNS; run++) {
-      const page = await browser.newPage({ viewport: { width: 1400, height: 1000 } })
+      const page = await browser.newPage({ viewport: PROFILE.viewport })
+      await applyProfile(page, PROFILE)
       page.setDefaultTimeout(mode.timeoutMs)
       const t0 = Date.now()
       await page.goto(BASE + mode.url, { waitUntil: 'domcontentloaded' })
@@ -121,7 +127,7 @@ async function measureMode(mode: Mode): Promise<{ samples: Sample[]; loadMs: num
 
 function render(results: Array<{ mode: Mode; samples: Sample[]; loadMs: number[]; heap: number[]; failed: string | null }>) {
   const lines: string[] = []
-  lines.push(`Measured ${new Date().toISOString().slice(0, 10)} on ${os.cpus()[0]?.model.trim() ?? 'unknown CPU'}, ${Math.round(os.totalmem() / 1e9)} GB RAM, headless Chromium via Playwright, production build served locally (\`next start\`). ${RUNS} runs per cell; values are medians of interaction → next painted frame, in ms. Engine = filter+sort time alone (worker or main thread).`)
+  lines.push(`Measured ${new Date().toISOString().slice(0, 10)} on ${os.cpus()[0]?.model.trim() ?? 'unknown CPU'}, ${Math.round(os.totalmem() / 1e9)} GB RAM, headless Chromium via Playwright, production build served locally (\`next start\`). Profile: ${PROFILE.label}. ${RUNS} runs per cell; values are medians of interaction → next painted frame, in ms. Engine = filter+sort time alone (worker or main thread).`)
   lines.push('')
   lines.push(`| Mode | Load → first rows | JS heap after load | ${STEPS.map((s) => s.name).join(' | ')} |`)
   lines.push(`| --- | --- | --- | ${STEPS.map(() => '---').join(' | ')} |`)
@@ -144,14 +150,15 @@ function render(results: Array<{ mode: Mode; samples: Sample[]; loadMs: number[]
 
 async function main() {
   const results = []
-  for (const mode of MODES) {
+  for (const mode of MODES.filter((m) => !ONLY || ONLY.includes(m.id))) {
     console.log(`\n${mode.label}`)
     results.push({ mode, ...(await measureMode(mode)) })
   }
-  const out = path.join(ROOT, 'docs', 'perf-results.md')
+  const suffix = PROFILE.id === 'desktop' ? '' : `-${PROFILE.id}`
+  const out = path.join(ROOT, 'docs', `perf-results${suffix}.md`)
   fs.mkdirSync(path.dirname(out), { recursive: true })
   fs.writeFileSync(out, render(results))
-  fs.writeFileSync(path.join(ROOT, 'docs', 'perf-results.json'), JSON.stringify(results.map((r) => ({ mode: r.mode.id, loadMs: r.loadMs, heap: r.heap, failed: r.failed, samples: r.samples })), null, 2))
+  fs.writeFileSync(path.join(ROOT, 'docs', `perf-results${suffix}.json`), JSON.stringify(results.map((r) => ({ mode: r.mode.id, loadMs: r.loadMs, heap: r.heap, failed: r.failed, samples: r.samples })), null, 2))
   console.log(`\nwrote ${out}`)
 }
 

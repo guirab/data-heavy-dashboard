@@ -1,0 +1,88 @@
+[
+  {
+    "profile": "desktop",
+    "cold": [
+      {
+        "firstDataRequestMs": 325,
+        "columnsDoneMs": 420,
+        "firstRowsMs": 938,
+        "dataTransferBytes": 3883083
+      },
+      {
+        "firstDataRequestMs": 320,
+        "columnsDoneMs": 406,
+        "firstRowsMs": 898,
+        "dataTransferBytes": 3883083
+      },
+      {
+        "firstDataRequestMs": 323,
+        "columnsDoneMs": 390,
+        "firstRowsMs": 932,
+        "dataTransferBytes": 3883083
+      }
+    ],
+    "warm": [
+      {
+        "firstDataRequestMs": 315,
+        "columnsDoneMs": 351,
+        "firstRowsMs": 867,
+        "dataTransferBytes": 0
+      },
+      {
+        "firstDataRequestMs": 314,
+        "columnsDoneMs": 354,
+        "firstRowsMs": 878,
+        "dataTransferBytes": 0
+      },
+      {
+        "firstDataRequestMs": 314,
+        "columnsDoneMs": 354,
+        "firstRowsMs": 877,
+        "dataTransferBytes": 0
+      }
+    ]
+  },
+  {
+    "profile": "mobile",
+    "cold": [
+      {
+        "firstDataRequestMs": 3895,
+        "columnsDoneMs": 23805,
+        "firstRowsMs": 24687,
+        "dataTransferBytes": 3883083
+      },
+      {
+        "firstDataRequestMs": 3909,
+        "columnsDoneMs": 23819,
+        "firstRowsMs": 24865,
+        "dataTransferBytes": 3883083
+      },
+      {
+        "firstDataRequestMs": 3895,
+        "columnsDoneMs": 23802,
+        "firstRowsMs": 24630,
+        "dataTransferBytes": 3883083
+      }
+    ],
+    "warm": [
+      {
+        "firstDataRequestMs": 430,
+        "columnsDoneMs": 933,
+        "firstRowsMs": 1859,
+        "dataTransferBytes": 0
+      },
+      {
+        "firstDataRequestMs": 440,
+        "columnsDoneMs": 932,
+        "firstRowsMs": 1872,
+        "dataTransferBytes": 0
+      },
+      {
+        "firstDataRequestMs": 398,
+        "columnsDoneMs": 903,
+        "firstRowsMs": 1823,
+        "dataTransferBytes": 0
+      }
+    ]
+  }
+]
