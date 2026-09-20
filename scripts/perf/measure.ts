@@ -42,7 +42,8 @@ const STEPS: Step[] = [
   {
     name: 'months jun–dez',
     run: async (p) => {
-      await p.getByLabel('From month').selectOption('6')
+      await p.getByRole('combobox', { name: 'From month' }).click()
+      await p.getByRole('option', { name: 'jun' }).click()
     },
   },
   {

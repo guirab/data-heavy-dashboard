@@ -3,7 +3,10 @@
 import { useDeferredValue, useId, useMemo, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Separator } from '@/components/ui/separator'
 import { fold } from '@/lib/data/fold'
 import type { DictEntry } from '@/types/dataset'
 
@@ -17,7 +20,7 @@ interface DimensionFilterProps {
   counts?: Map<string, number>
 }
 
-/** Multi-select over a dictionary: a popover with a search box and native checkboxes (keyboard-complete). */
+/** Multi-select over a dictionary: a popover with a search box and a checkbox per entry (keyboard-complete). */
 export function DimensionFilter({ label, entries, selected, onToggle, onClear, counts }: DimensionFilterProps) {
   const [q, setQ] = useState('')
   const dq = useDeferredValue(q)
@@ -43,43 +46,39 @@ export function DimensionFilter({ label, entries, selected, onToggle, onClear, c
         {n > 0 && <span className="rounded-sm bg-primary px-1.5 text-[11px] leading-4 text-primary-foreground">{n}</span>}
         <ChevronDown aria-hidden className="size-3.5 opacity-60" />
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-80 p-0">
-        <div className="border-b border-border p-2">
-          <input
-            type="search"
-            aria-label={`Search ${label}`}
-            placeholder={`Search ${label.toLowerCase()}…`}
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            className="h-8 w-full rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          />
+      <PopoverContent align="start" className="w-80 gap-0 p-0" aria-label={`${label} filter`}>
+        <div className="p-2">
+          <Input type="search" aria-label={`Search ${label}`} placeholder={`Search ${label.toLowerCase()}…`} value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
-        <ul role="group" aria-labelledby={`${id}-legend`} className="max-h-72 overflow-y-auto p-1">
-          <li id={`${id}-legend`} className="sr-only">
+        <Separator />
+        {/* A group of checkboxes, not a list: <ul role="group"> would orphan its <li>s (axe listitem). */}
+        <div role="group" aria-labelledby={`${id}-legend`} className="max-h-72 overflow-y-auto p-1">
+          <span id={`${id}-legend`} className="sr-only">
             {label} options
-          </li>
-          {options.length === 0 && <li className="px-2 py-3 text-sm text-muted-foreground">No match</li>}
+          </span>
+          {options.length === 0 && <p className="px-2 py-3 text-sm text-muted-foreground">No match</p>}
           {options.map((o) => {
             const checked = selected.includes(o.code!)
             return (
-              <li key={o.code}>
-                <label className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring">
-                  <input type="checkbox" className="size-3.5 accent-primary" checked={checked} onChange={() => onToggle(o.code!)} />
-                  <span className="min-w-0 flex-1 truncate" title={o.name}>
-                    {o.name}
-                  </span>
-                  {counts?.has(o.code!) && <span className="tabular text-xs text-muted-foreground">{counts.get(o.code!)!.toLocaleString('en-US')}</span>}
-                </label>
-              </li>
+              <label key={o.code} className="flex cursor-pointer items-center gap-2 rounded-sm px-2 py-1.5 text-sm hover:bg-accent">
+                <Checkbox className="size-3.5" checked={checked} onCheckedChange={() => onToggle(o.code!)} />
+                <span className="min-w-0 flex-1 truncate" title={o.name}>
+                  {o.name}
+                </span>
+                {counts?.has(o.code!) && <span className="tabular text-xs text-muted-foreground">{counts.get(o.code!)!.toLocaleString('en-US')}</span>}
+              </label>
             )
           })}
-        </ul>
+        </div>
         {n > 0 && (
-          <div className="border-t border-border p-2">
-            <Button variant="ghost" size="sm" onClick={onClear}>
-              Clear {label.toLowerCase()}
-            </Button>
-          </div>
+          <>
+            <Separator />
+            <div className="p-2">
+              <Button variant="ghost" size="sm" onClick={onClear}>
+                Clear {label.toLowerCase()}
+              </Button>
+            </div>
+          </>
         )}
       </PopoverContent>
     </Popover>
