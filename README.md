@@ -213,6 +213,9 @@ block LCP because the headline tiles are static HTML. Details in [docs/perf.md](
   `aria-sort` on headers, and a polite live region announcing "N of M lines match".
 - Every chart has a `role="img"` summary sentence and a **View as table** toggle, so identity
   and values are never colour-alone. Categorical colours follow a validated CVD-safe order.
+  The chart SVGs themselves are inert to the keyboard (Recharts' accessibility layer is off:
+  it would add a focusable, unnamed `role="application"` inside the figure, which axe does
+  not flag but a screen-reader user would hit); the table view is the keyboard/SR path.
 - Filters are native `<select>`s and checkboxes inside a popover; no custom widget stands
   between the keyboard and the state.
 - `e2e/a11y.spec.ts` runs axe (WCAG 2.1 AA + best practices) over the **ready, loading, error

@@ -113,7 +113,9 @@ export function AgencyRanking({ agencies, previous, previousYear, selectedCodes,
         <p className="py-8 text-center text-sm text-muted-foreground">No agencies match the current filters.</p>
       ) : (
         <ResponsiveContainer width="100%" height={height}>
-          <BarChart data={data} layout="vertical" margin={{ top: 4, right: 56, bottom: 4, left: 4 }} barCategoryGap={8}>
+          {/* No accessibilityLayer: it makes the svg a focusable, unnamed role="application" inside
+              the figure's role="img". The summary sentence and "View as table" are the AT path. */}
+          <BarChart accessibilityLayer={false} data={data} layout="vertical" margin={{ top: 4, right: 56, bottom: 4, left: 4 }} barCategoryGap={8}>
             <XAxis
               type="number"
               domain={metric === 'pct' ? [0, (max: number) => Math.min(100, Math.ceil(max / 10) * 10)] : [0, 'auto']}

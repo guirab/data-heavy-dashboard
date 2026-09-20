@@ -89,7 +89,8 @@ export function CumulativeChart({ series, year, partial, preview, scopeLabel }: 
         <p className="py-8 text-center text-sm text-muted-foreground">No data for the current filters.</p>
       ) : (
         <ResponsiveContainer width="100%" height={280}>
-          <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 8 }}>
+          {/* See AgencyRanking: the figure's summary + table view are the accessible path. */}
+          <LineChart accessibilityLayer={false} data={data} margin={{ top: 8, right: 16, bottom: 0, left: 8 }}>
             <CartesianGrid vertical={false} stroke="var(--viz-grid)" />
             <XAxis dataKey="month" tick={{ fill: 'var(--viz-muted)', fontSize: 11 }} axisLine={{ stroke: 'var(--viz-axis)' }} tickLine={false} />
             <YAxis

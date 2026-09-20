@@ -23,9 +23,12 @@ export function LoadingProgress({ progress, rows }: LoadingProgressProps) {
   const loaded = progress?.loaded ?? 0
   const pct = total > 0 ? Math.round((100 * loaded) / total) : 0
   const label = progress ? PHASE_LABEL[progress.phase] : 'Starting worker'
+  const mb = (b: number) => (b / 1e6).toFixed(1)
   return (
-    <div className="rounded-lg border border-border bg-card p-6" aria-live="polite" aria-busy="true">
-      <p className="text-sm font-medium">
+    <div className="rounded-lg border border-border bg-card p-6">
+      {/* Only the phase label is live: one announcement per phase, not one per received chunk.
+          (aria-busy on a live region would tell the reader to hold announcements instead.) */}
+      <p className="text-sm font-medium" aria-live="polite" aria-atomic="true">
         {label}
         {rows ? ` — ${formatInt(rows)} budget lines` : ''}
       </p>
@@ -35,12 +38,13 @@ export function LoadingProgress({ progress, rows }: LoadingProgressProps) {
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={pct}
+        aria-valuetext={total > 0 ? `${pct}%, ${mb(loaded)} of ${mb(total)} MB` : undefined}
         className="mt-3 h-2 w-full overflow-hidden rounded-full bg-muted"
       >
         <div className="h-full rounded-full bg-primary transition-[width] duration-150" style={{ width: `${pct}%` }} />
       </div>
-      <p className="mt-2 text-xs text-muted-foreground tabular">
-        {total > 0 ? `${(loaded / 1e6).toFixed(1)} of ${(total / 1e6).toFixed(1)} MB (gzip)` : '…'}
+      <p className="mt-2 text-xs text-muted-foreground tabular" aria-hidden="true">
+        {total > 0 ? `${mb(loaded)} of ${mb(total)} MB (gzip)` : '…'}
       </p>
     </div>
   )

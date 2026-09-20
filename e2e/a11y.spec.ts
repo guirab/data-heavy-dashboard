@@ -25,6 +25,9 @@ test('ready state: grid, charts and filters', async ({ page }) => {
   await gridReady(page)
   await expect(page.getByRole('grid', { name: 'Budget lines' })).toBeVisible()
   await expect(page.locator('[aria-live="polite"]').first()).toContainText(/of 328,263 lines match/)
+  // Recharts' accessibility layer would make each chart svg a focusable, unnamed
+  // role="application" inside the figure's role="img"; axe does not flag that, so we do.
+  await expect(page.locator('svg[role="application"], figure[role="img"] svg[tabindex]')).toHaveCount(0)
   await axe(page, 'ready')
 })
 
