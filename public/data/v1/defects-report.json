@@ -408,7 +408,7 @@
         "2026 elemento: longest name is exactly 45 bytes (column cut upstream) — 0 confirmed via overrides, 22 suspected"
       ],
       "problem": "Several name columns are cut at exactly 45 bytes of UTF-8 — bytes, not characters, so \"Ministério da Ciência, Tecnologia e Inovaç\" loses more letters than an unaccented name would. The cut happened upstream; the file cannot recover it.",
-      "rule": "Kept as published. For órgão superior, a 9-entry hand-curated override table supplies the full name (the only manual data in the repo). Entries at exactly 45 bytes elsewhere are flagged \"suspected\" so the UI can say so.",
+      "rule": "Kept as published. For órgão superior, a hand-curated override table (9 full names plus 1 entry marking a 45-byte name as verified complete — the only manual data in the repo) supplies the full name. Entries at exactly 45 bytes elsewhere are flagged \"suspected\" so the UI can say so.",
       "title": "Names truncated at the source (45 UTF-8 bytes)"
     },
     {
@@ -650,6 +650,29 @@
       "problem": "Nothing in the file says whether a month's values are the month's movement or the cumulative position. They are deltas: January 2025 alone shows R$1.76T committed (annual payroll and debt are committed up front), later months show only what changed.",
       "rule": "Sum months to get the year; compute cumulative series in the aggregation step. Documented because a YTD reading would over-count twelvefold.",
       "title": "Monthly files are deltas, not year-to-date"
+    },
+    {
+      "action": "document",
+      "affectedRows": {
+        "2024": 0,
+        "2025": 0,
+        "2026": 0
+      },
+      "columnHits": {},
+      "columns": [
+        "all columns",
+        "all dimension columns"
+      ],
+      "examples": [],
+      "id": "DEF-19",
+      "notes": [
+        "2024: 0 exact duplicate rows, 0 rows sharing all dimensions with another row, over 831,444 distinct rows",
+        "2025: 0 exact duplicate rows, 0 rows sharing all dimensions with another row, over 789,883 distinct rows",
+        "2026: 0 exact duplicate rows, 0 rows sharing all dimensions with another row, over 550,532 distinct rows"
+      ],
+      "problem": "A monthly file could repeat a line (exact duplicate) or publish two lines with identical classification and different amounts (duplicate key), and grouping would sum them silently.",
+      "rule": "Every raw row is hashed twice — all 47 fields, and the 41 dimension fields — and repeats are counted per year. The count is reported even when it is zero, because \"we checked\" is the point.",
+      "title": "Duplicate rows"
     }
   ],
   "years": [

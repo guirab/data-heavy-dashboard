@@ -60,7 +60,7 @@ export function StaleBadge({ sourceLastModified, lastPublished, now = new Date()
   const expectedBy = new Date(Date.UTC(lastPublished.year, lastPublished.month + 1, 0))
   const nextMonthLate = now.getTime() > expectedBy.getTime() + 45 * 86_400_000
   const stale = (ageDays !== null && ageDays > 45) || nextMonthLate
-  const label = modified ? `Source updated ${modified.toISOString().slice(0, 10)}` : 'Source date unknown'
+  const label = modified ? `Source files dated ${modified.toISOString().slice(0, 10)}` : 'Source date unknown'
   return (
     <Badge
       variant="outline"

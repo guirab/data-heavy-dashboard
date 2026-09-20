@@ -14,6 +14,7 @@ import { validateYear } from './04-validate.ts'
 import { emitYear, writeJson } from './05-emit.ts'
 import { LAST_PUBLISHED, OUT_DIR, SOURCE, YEARS, monthsOf, period } from './config.ts'
 import { DefectsRegistry } from './defects.ts'
+import { DEF19, DuplicateDetector } from './duplicates.ts'
 import { ROW_RULES } from './rules/index.ts'
 import { RAW_HEADER } from './schema.ts'
 
@@ -32,7 +33,7 @@ const log = (msg: string) => console.log(`[${((Date.now() - t0) / 1000).toFixed(
 function main() {
   const reg = new DefectsRegistry()
   for (const r of ROW_RULES) reg.register(r.def)
-  for (const d of [DEF01, DEF02, DEF10, DEF12, DEF13, DEF14, DEF15, DEF18]) reg.register(d)
+  for (const d of [DEF01, DEF02, DEF10, DEF12, DEF13, DEF14, DEF15, DEF18, DEF19]) reg.register(d)
 
   const sourceManifest = readManifest()
   const yearly: Array<Record<string, string | number | null>> = []
@@ -42,11 +43,13 @@ function main() {
     const months = monthsOf(year)
     const dict = new DictionaryBuilder(year)
     const agg = new Aggregator()
+    const dupes = new DuplicateDetector(year)
     let kept = 0
     let dropped = 0
     for (const month of months) {
       const rows = readMonth(year, month, reg)
       for (const row of rows) {
+        dupes.add(row)
         let verdict: 'keep' | 'drop' = 'keep'
         // DEF-03 runs first and parses the money columns; raw totals are taken right after it.
         for (const rule of ROW_RULES) {
@@ -66,6 +69,7 @@ function main() {
     reg.countKept(year, kept)
     reg.countDropped(year, dropped)
     reg.addRows('DEF-18', year, kept)
+    dupes.report(reg)
 
     const dictionaries = dict.finalize(reg)
     const grouped = agg.finalize()

@@ -1,0 +1,55 @@
+{
+  "preset": "mobile",
+  "lighthouseVersion": "13.5.0",
+  "fetchTime": "2026-09-20T01:32:17.829Z",
+  "url": "http://localhost:3000/",
+  "scores": {
+    "performance": 90,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100,
+    "agentic-browsing": 100
+  },
+  "audits": {
+    "first-contentful-paint": {
+      "value": 906.1013,
+      "display": "0.9 s",
+      "score": 1
+    },
+    "largest-contentful-paint": {
+      "value": 2106.1013,
+      "display": "2.1 s",
+      "score": 0.96
+    },
+    "total-blocking-time": {
+      "value": 371,
+      "display": "370 ms",
+      "score": 0.71
+    },
+    "cumulative-layout-shift": {
+      "value": 0,
+      "display": "0",
+      "score": 1
+    },
+    "speed-index": {
+      "value": 1907.7456618875442,
+      "display": "1.9 s",
+      "score": 1
+    },
+    "interactive": {
+      "value": 4640.9526000000005,
+      "display": "4.6 s",
+      "score": 0.81
+    },
+    "total-byte-weight": {
+      "value": 4377378,
+      "display": "Total size was 4,275 KiB",
+      "score": 0.5
+    },
+    "server-response-time": {
+      "value": 8,
+      "display": "Root document took 10 ms",
+      "score": 1
+    }
+  }
+}

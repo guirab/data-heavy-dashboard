@@ -16,7 +16,7 @@ export const DEF10 = {
   id: 'DEF-10',
   title: 'Names truncated at the source (45 UTF-8 bytes)',
   problem: 'Several name columns are cut at exactly 45 bytes of UTF-8 — bytes, not characters, so "Ministério da Ciência, Tecnologia e Inovaç" loses more letters than an unaccented name would. The cut happened upstream; the file cannot recover it.',
-  rule: 'Kept as published. For órgão superior, a 9-entry hand-curated override table supplies the full name (the only manual data in the repo). Entries at exactly 45 bytes elsewhere are flagged "suspected" so the UI can say so.',
+  rule: 'Kept as published. For órgão superior, a hand-curated override table (9 full names plus 1 entry marking a 45-byte name as verified complete — the only manual data in the repo) supplies the full name. Entries at exactly 45 bytes elsewhere are flagged "suspected" so the UI can say so.',
   action: 'document' as const,
   columns: ['Nome Órgão Superior', 'Nome Elemento de Despesa', 'Nome Unidade Orçamentária'],
 }

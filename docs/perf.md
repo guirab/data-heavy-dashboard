@@ -5,6 +5,12 @@ Target from the brief: **interaction → visible update under 200 ms at full dat
 
 ## What is measured, and how
 
+The brief asks for React DevTools Profiler and/or Lighthouse numbers. Lighthouse is below.
+The React Profiler is not used for the before/after table on purpose: it is a no-op in
+production builds and its DevTools export is a manual, non-reproducible capture. The
+instrumentation here measures the same thing — interaction to painted frame — in the
+production build, from a script anyone can rerun.
+
 Three clocks, all in the page:
 
 1. **Engine** — filter + sort + aggregate alone. In the worker it is `performance.now()`
@@ -113,18 +119,20 @@ would not be a Recharts chart with more props.
 ## Lighthouse
 
 <!-- lighthouse:start -->
-Lighthouse 13.5, production build on localhost, Playwright's Chromium, 2026-09-19:
+Lighthouse 13.5, production build on localhost, Playwright's Chromium, `pnpm perf:lighthouse`
+(trimmed reports saved as `docs/lighthouse-desktop.json` / `docs/lighthouse-mobile.json`):
 
 | Preset | Performance | Accessibility | Best practices | SEO | FCP | LCP | TBT | CLS | Speed Index |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Desktop | 100 | 100 | 100 | 100 | 0.2 s | 0.6 s | 20 ms | 0.017 | 0.7 s |
-| Mobile (4× CPU slowdown, slow 4G) | 90 | 100 | 100 | 100 | 0.9 s | 2.1 s | 380 ms | 0 | 2.2 s |
+| Desktop | 100 | 100 | 100 | 100 | 0.2 s | 0.6 s | 40 ms | 0 | 0.7 s |
+| Mobile (4× CPU slowdown, slow 4G) | 90 | 100 | 100 | 100 | 0.9 s | 2.1 s | 370 ms | 0 | 1.9 s |
 
 Total transfer 4.3 MB, of which 3.5 MB is the columnar slice and ~330 KB the gzipped
 dictionaries; the slice is fetched after first paint and does not block LCP (the headline
-tiles are static HTML). Mobile TBT (380 ms) is hydration plus the one-off structured clone
+tiles are static HTML). Mobile TBT (~370 ms) is hydration plus the one-off structured clone
 of the ~17k-entry dictionaries and the decode of the columns on the main thread after the
-worker finishes; it is the number to attack next (see README limitations).
+worker finishes; it is the number to attack next (see README limitations). Mobile scores
+vary by a few points between runs (87–90 observed); desktop is stable.
 <!-- lighthouse:end -->
 
 ## Reproduce

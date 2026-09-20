@@ -50,7 +50,7 @@ Input: **2,171,859 rows** (2024: 831,444, 2025: 789,883, 2026: 550,532). Kept: *
 | DEF-07 | **Amendment author code and name disagree** — Rows with an empty author code but the name "Informação do autor não disponível": the code says "no amendment", the name says "amendment, author unknown". | Treat as unknown author: null both fields and count. The column is not served, but the count belongs in the report. | set to null | 1,740 (0.1%) — 2024: 849, 2025: 551, 2026: 340 | `code="" name="Informação do autor não disponível"` → `null` |
 | DEF-08 | **Runs of internal spaces (fixed-width remnants)** — Names like "ADMINISTRACAO DA UNIDADE       - NACIONAL" keep padding from a fixed-width upstream system. | Collapse any run of two or more whitespace characters to a single space. | transformed | 546,560 (25.2%) — 2024: 208,557, 2025: 198,338, 2026: 139,665 | `ADMINISTRACAO DA UNIDADE       - NACIONAL` → `ADMINISTRACAO DA UNIDADE - NACIONAL` |
 | DEF-09 | **Leading/trailing whitespace in names** — Some names carry trailing spaces (e.g. "ADMINISTRACAO DA UNIDADE - NO ESTADO DO "), which makes the same value look like two distinct categories. | Trim every name column. Applied before dictionary building so keys never differ only by whitespace. | transformed | 64,361 (3.0%) — 2024: 22,306, 2025: 24,191, 2026: 17,864 | `"ATIVOS CIVIS DA UNIAO         - NO ESTADO DE "` → `"ATIVOS CIVIS DA UNIAO         - NO ESTADO DE"` |
-| DEF-10 | **Names truncated at the source (45 UTF-8 bytes)** — Several name columns are cut at exactly 45 bytes of UTF-8 — bytes, not characters, so "Ministério da Ciência, Tecnologia e Inovaç" loses more letters than an unaccented name would. The cut happened upstream; the file cannot recover it. | Kept as published. For órgão superior, a 9-entry hand-curated override table supplies the full name (the only manual data in the repo). Entries at exactly 45 bytes elsewhere are flagged "suspected" so the UI can say so. | documented | dictionary-level (see notes) | `Ministério do Desenvolvimento Agrário e Agr` → `Ministério do Desenvolvimento Agrário e Agricultura Familiar` |
+| DEF-10 | **Names truncated at the source (45 UTF-8 bytes)** — Several name columns are cut at exactly 45 bytes of UTF-8 — bytes, not characters, so "Ministério da Ciência, Tecnologia e Inovaç" loses more letters than an unaccented name would. The cut happened upstream; the file cannot recover it. | Kept as published. For órgão superior, a hand-curated override table (9 full names plus 1 entry marking a 45-byte name as verified complete — the only manual data in the repo) supplies the full name. Entries at exactly 45 bytes elsewhere are flagged "suspected" so the UI can say so. | documented | dictionary-level (see notes) | `Ministério do Desenvolvimento Agrário e Agr` → `Ministério do Desenvolvimento Agrário e Agricultura Familiar` |
 | DEF-11 | **"§" mangled to "??" upstream** — Legal references like "§§ 1º e 2º" arrive as "?? 1º e 2º": the section sign was lost before the file was exported (the file itself decodes cleanly as ISO-8859-1). | Left alone. Guessing the original character would be inventing data; the count documents the loss. | kept as-is | 2,159 (0.1%) — 2024: 1,193, 2025: 779, 2026: 187 | `DOTACOES CLASSIFICADAS COM RP 2, INCLUIDAS OU ACRESCIDAS POR EMENDA…` |
 | DEF-12 | **Three naming conventions in one file** — Some name columns are Title Case with accents (órgão, função), others are UPPER CASE without accents (ação, plano orçamentário), and a few mix both across rows. | Displayed as published. Search folds accents and case so "acao" matches "AÇÃO" and "Ação". | documented | dictionary-level (see notes) | 2024: Title: orgSup, orgSub, funcao, subfuncao, grupo, elemento, modalidade · UPPER: programa, po, uf · mix… |
 | DEF-13 | **Same code, different names across periods** — A code can change its name between months (renamed programs, "- DESPESAS DIVERSAS" suffixes appearing mid-year). | The dictionary keeps one entry per code with the name from the latest period; earlier names are stored as aliases and counted here. Nothing is keyed by name. | transformed | 68,725 (3.2%) — 2024: 45,088, 2025: 18,044, 2026: 5,593 | `0001: "OPERACAO CARRO-PIPA PARA DISTRIBUICAO DE AGUA NO SEMIARIDO B…` → `"0001 - OPERACAO CARRO-PIPA PARA DISTRIBUICAO EMERGENCIAL…` |
@@ -59,6 +59,7 @@ Input: **2,171,859 rows** (2024: 831,444, 2025: 789,883, 2026: 550,532). Kept: *
 | DEF-16 | **Negative amounts** — Committed, verified and paid amounts can be negative in a month: they are reversals (estornos) of earlier commitments, not errors. | Kept as-is. Dropping or clamping them would overstate execution; the UI shows the sign and monthly cumulative series absorb them. | kept as-is | 171,039 (7.9%) — 2024: 69,872, 2025: 71,883, 2026: 29,284 | `-58524,97` |
 | DEF-17 | **Rows where all six values are 0,00** — A budget line can appear in a month with every amount equal to zero (nothing committed, paid or carried over). It adds a row and no information. | Drop the row and count it. This is the only rule that drops rows; the count is asserted in validation (input = kept + dropped). | row dropped | 4,644 (0.2%) — 2024: 1,845, 2025: 1,768, 2026: 1,031 | — |
 | DEF-18 | **Monthly files are deltas, not year-to-date** — Nothing in the file says whether a month's values are the month's movement or the cumulative position. They are deltas: January 2025 alone shows R$1.76T committed (annual payroll and debt are committed up front), later months show only what changed. | Sum months to get the year; compute cumulative series in the aggregation step. Documented because a YTD reading would over-count twelvefold. | documented | 2,167,215 (100%) — 2024: 829,599, 2025: 788,115, 2026: 549,501 | — |
+| DEF-19 | **Duplicate rows** — A monthly file could repeat a line (exact duplicate) or publish two lines with identical classification and different amounts (duplicate key), and grouping would sum them silently. | Every raw row is hashed twice — all 47 fields, and the 41 dimension fields — and repeats are counted per year. The count is reported even when it is zero, because "we checked" is the point. | documented | dictionary-level (see notes) | 2024: 0 exact duplicate rows, 0 rows sharing all dimensions with another row, over 831,444 distinct rows |
 
 <details><summary>Per-year notes generated by the pipeline</summary>
 
@@ -108,8 +109,18 @@ Input: **2,171,859 rows** (2024: 831,444, 2025: 789,883, 2026: 550,532). Kept: *
 - 2025: 315 distinct PO codes expand to 16,685 (órgão subordinado, ação, PO) keys
 - 2026: 320 distinct PO codes expand to 13,751 (órgão subordinado, ação, PO) keys
 
+**DEF-19**
+
+- 2024: 0 exact duplicate rows, 0 rows sharing all dimensions with another row, over 831,444 distinct rows
+- 2025: 0 exact duplicate rows, 0 rows sharing all dimensions with another row, over 789,883 distinct rows
+- 2026: 0 exact duplicate rows, 0 rows sharing all dimensions with another row, over 550,532 distinct rows
+
 </details>
 <!-- defects:end -->
+
+Duplicates are checked, not assumed: DEF-19 hashes every raw row twice (all 47 fields, and
+the 41 dimension fields) and found **0 exact and 0 key duplicates** in each of the three
+years, so grouping never adds two published lines together silently.
 
 Two things the counts caught that reading the files did not: the truncation is at 45
 **UTF-8 bytes**, not characters (so "Ministério da Justiça e Segurança Pública" is
@@ -188,10 +199,11 @@ Three SVG nodes per point and linear growth: fine for 36 bars, not an option for
 "every budget line over time" view. That view was not built; uPlot or a raw canvas is the
 named replacement if it ever is.
 
-**Lighthouse** (13.5, production build, localhost): desktop **100 / 100 / 100 / 100**
-(FCP 0.2 s, LCP 0.6 s, TBT 20 ms, CLS 0.017); mobile preset **90** performance (LCP 2.1 s,
-TBT 380 ms) with 100 on the other three. The 3.5 MB slice loads after first paint and does
-not block LCP because the headline tiles are static HTML. Details in [docs/perf.md](docs/perf.md#lighthouse).
+**Lighthouse** (13.5, production build, localhost, `pnpm perf:lighthouse`, reports in
+`docs/lighthouse-*.json`): desktop **100 / 100 / 100 / 100** (FCP 0.2 s, LCP 0.6 s,
+TBT 40 ms, CLS 0); mobile preset **90** performance (LCP 2.1 s, TBT 370 ms; 87–90 across
+runs) with 100 on the other three. The 3.5 MB slice loads after first paint and does not
+block LCP because the headline tiles are static HTML. Details in [docs/perf.md](docs/perf.md#lighthouse).
 
 ## Accessibility
 
@@ -236,8 +248,9 @@ not block LCP because the headline tiles are static HTML. Details in [docs/perf.
   but a 15-column horizontal scroll is a compromise, not a design.
 - **Search is prefix-free substring matching over names**, not ranked. Good enough for
   ~17k distinct strings; would not be for free text.
-- **The DEF-10 override table is hand-curated** (10 entries). It is the only manual data in
-  the repo and it is labelled as such; it will need a new entry when a ministry is renamed.
+- **The DEF-10 override table is hand-curated** (9 full names plus 1 entry marking a
+  45-byte name as verified complete). It is the only manual data in the repo and it is
+  labelled as such; it will need a new entry when a ministry is renamed.
 - **No CSV export of the current filter yet**, which is the honest answer to "how does a
   screen-reader user get the whole table".
 - **Licence text** for the bulk files is inferred from the decree, not quoted from the

@@ -19,7 +19,8 @@
     "perf:measure": "node scripts/perf/measure.ts",
     "readme:perf": "node scripts/readme/perf-table.ts",
     "perf:bench": "node scripts/perf/engine-bench.ts",
-    "perf:chart": "node scripts/perf/chart-stress.mjs"
+    "perf:chart": "node scripts/perf/chart-stress.mjs",
+    "perf:lighthouse": "node scripts/perf/lighthouse.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
