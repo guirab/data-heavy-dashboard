@@ -21,9 +21,48 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
+  data-download:
+    # One job per fiscal year, each on its own runner: the portal blocks a client after
+    # ~25 consecutive files, and no year has more than 12. Downloaded zips are verified
+    # against data/manifest.json (sha256) and handed to the determinism job as artifacts.
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        year: [2024, 2025, 2026]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Restore raw source files
+        uses: actions/cache/restore@v4
+        with:
+          path: data/raw
+          key: raw-${{ matrix.year }}-${{ hashFiles('data/manifest.json') }}-${{ github.run_id }}
+          restore-keys: |
+            raw-${{ matrix.year }}-${{ hashFiles('data/manifest.json') }}-
+            raw-${{ matrix.year }}-
+      - run: pnpm data:download -- --year ${{ matrix.year }}
+      - name: Save raw source files
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/raw
+          key: raw-${{ matrix.year }}-${{ hashFiles('data/manifest.json') }}-${{ github.run_id }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: raw-${{ matrix.year }}
+          path: data/raw/despesas-execucao_${{ matrix.year }}*.zip
+          retention-days: 1
+          if-no-files-found: error
+
   data-determinism:
-    # Re-downloads the source files listed in data/manifest.json, reruns the
-    # pipeline and fails if any committed artifact under public/data/ changes.
+    # Reruns the pipeline over the downloaded sources and fails if any committed
+    # artifact under public/data/ changes.
+    needs: data-download
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -33,23 +72,9 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # Raw zips are cached across runs and saved even when the download step fails,
-      # so a portal throttle (it answers bursts with HTTP 405) costs a retry, not a
-      # restart from zero. Cached files are verified against the manifest's SHA-256.
-      - name: Restore raw source files
-        id: raw-cache
-        uses: actions/cache/restore@v4
+      - uses: actions/download-artifact@v4
         with:
+          pattern: raw-*
           path: data/raw
-          key: raw-${{ hashFiles('data/manifest.json') }}-${{ github.run_id }}
-          restore-keys: |
-            raw-${{ hashFiles('data/manifest.json') }}-
-            raw-
-      - run: pnpm data:download
-      - name: Save raw source files
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: data/raw
-          key: raw-${{ hashFiles('data/manifest.json') }}-${{ github.run_id }}
+          merge-multiple: true
       - run: pnpm data:verify
