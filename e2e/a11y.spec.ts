@@ -118,3 +118,25 @@ test('keyboard: filters → grid cells → sort → chart table view', async ({ 
   await expect(page.getByRole('table').first()).toBeVisible()
   await axe(page, 'chart-table-view')
 })
+
+test('keyboard: Tab and Shift+Tab leave the grid in both directions (no trap)', async ({ page }) => {
+  await page.goto('/')
+  await gridReady(page)
+  const inGrid = () => page.evaluate(() => !!document.activeElement?.closest('[role="grid"]'))
+  await page.getByRole('grid', { name: 'Budget lines' }).focus()
+  await expect(page.locator(':focus')).toHaveAttribute('role', 'gridcell')
+  // Backwards: real Shift+Tab presses must get out within a bounded number of keys
+  // (the 15 sortable headers sit between the active cell and the container).
+  let presses = 0
+  while (await inGrid()) {
+    expect(presses++, 'Shift+Tab never left the grid').toBeLessThan(20)
+    await page.keyboard.press('Shift+Tab')
+  }
+  // Forwards: Tab re-enters on the active cell, and one more Tab leaves to the footer link.
+  await page.keyboard.press('Tab')
+  await expect(page.locator(':focus')).toHaveAttribute('role', 'gridcell')
+  await expect(page.locator(':focus')).toHaveAttribute('data-r', '0')
+  await page.keyboard.press('Tab')
+  expect(await inGrid()).toBe(false)
+  await expect(page.getByRole('link', { name: 'data dictionary' })).toBeFocused()
+})

@@ -208,9 +208,9 @@ block LCP because the headline tiles are static HTML. Details in [docs/perf.md](
 ## Accessibility
 
 - The table is an ARIA **grid** with `aria-rowcount` / `aria-colcount` and absolute
-  `aria-rowindex` on virtual rows; one tab stop, roving focus, arrows / Page Up-Down /
-  Ctrl+Home-End, `aria-sort` on headers, and a polite live region announcing "N of M lines
-  match".
+  `aria-rowindex` on virtual rows; Tab lands on the active cell (roving focus), arrows /
+  Page Up-Down / Ctrl+Home-End move, Shift+Tab walks the sortable headers on the way out,
+  `aria-sort` on headers, and a polite live region announcing "N of M lines match".
 - Every chart has a `role="img"` summary sentence and a **View as table** toggle, so identity
   and values are never colour-alone. Categorical colours follow a validated CVD-safe order.
 - Filters are native `<select>`s and checkboxes inside a popover; no custom widget stands
@@ -225,7 +225,9 @@ block LCP because the headline tiles are static HTML. Details in [docs/perf.md](
   next step (see below).
 - Bugs the e2e suite found: a pending programmatic focus stealing focus back from a header
   button; the chart table view not being keyboard-scrollable; a missing `<main>` landmark;
-  network failures surfacing as "engine" errors.
+  network failures surfacing as "engine" errors; and — only once the walkthrough pressed
+  real keys instead of calling `.focus()` — a Shift+Tab trap: the grid container handed focus
+  back to the active cell whenever it received it, including from its own header row.
 
 ## The five states
 

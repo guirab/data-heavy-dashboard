@@ -131,9 +131,14 @@ export function BudgetLinesTable({ columns, dict, ids, sort, onSort, engineMs, h
     e.preventDefault()
   }
 
-  // Tab lands on the grid; hand focus to the active cell (scrolling it into view first).
-  const onGridFocus = (e: React.FocusEvent) => {
-    if (e.target === e.currentTarget && ids.length) move(active.r, active.c)
+  // Tab lands on the grid from outside: hand focus to the active cell (scrolling it into
+  // view first). Focus arriving from inside — Shift+Tab off the first header button — is
+  // left on the container, otherwise the grid is a keyboard trap (WCAG 2.1.2).
+  const onGridFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget || !ids.length) return
+    const from = e.relatedTarget
+    if (from instanceof Node && e.currentTarget.contains(from)) return
+    move(active.r, active.c)
   }
 
   return (
