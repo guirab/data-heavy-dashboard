@@ -274,7 +274,8 @@ pnpm dev             # http://localhost:3000
 
 Tests: `pnpm test` (Vitest: rules on real rows, columnar codec, engine vs. pre-aggregates,
 radix vs. comparator, URL codec), `pnpm e2e` (Playwright + axe, builds and serves on :3100),
-`pnpm typecheck`, `pnpm lint`.
+`pnpm typecheck`, `pnpm lint`. CI runs all of them on every push, plus the per-year source
+download and the determinism check.
 
 ## Deploying
 

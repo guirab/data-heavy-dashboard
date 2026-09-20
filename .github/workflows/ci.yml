@@ -21,6 +21,30 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
+  e2e:
+    # axe over the five states + keyboard walkthrough, against a production build.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm e2e
+        env:
+          CI: true
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            test-results
+            playwright-report
+          retention-days: 7
+
   data-download:
     # One job per fiscal year, each on its own runner: the portal blocks a client after
     # ~25 consecutive files, and no year has more than 12. Downloaded zips are verified
