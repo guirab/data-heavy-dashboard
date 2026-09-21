@@ -65,10 +65,30 @@ Reading the table:
   blocking: search goes from 614 ms to 97 ms, heap on the main thread from 91 MB to 27 MB.
   "Sort by paid" is still 148 ms because the comparator sort alone is ~75 ms.
 - **C → D (radix sort)** takes the engine for a full-slice sort from 77 ms to 30 ms; every
-  interaction is now under 100 ms end to end, with roughly 50–60 ms of that being React
-  re-render + paint of the grid rather than data work.
+  interaction lands at 83–105 ms end to end, with roughly 60–80 ms of that being React
+  re-render + paint of the grid rather than data work. (The 2026-09-19 run read 77–96 ms;
+  the month step now opens a Select popup and clicks an option instead of setting a native
+  `<select>`, and the difference is inside run-to-run noise.)
 - Load → first rows is ~900 ms on localhost (3.5 MB download, SHA-256, inflate, decode,
-  index); on a real network the download dominates.
+  index); on a real network the download dominates — see [Data delivery](#data-delivery).
+
+### The same interactions on the mobile profile
+
+`PERF_PROFILE=mobile PERF_MODES=D pnpm perf:measure 5` — 4× CPU slowdown, slow 4G, 390 px
+viewport, mode D only (`docs/perf-results-mobile.md`):
+
+| Mode | Load → first rows | JS heap after load | sort by Paid | search "universidade" | clear search | months jun–dez | filter agency (Educação) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| D · C + radix sort in the worker (all rows) — shipped | 23100 ms | 41 MB | **269** (engine 38) | **274** (engine 21) | **245** (engine 31) | **364** (engine 31) | **425** (engine 14) |
+
+**This misses the 200 ms budget** — 245–425 ms per interaction. The engine is unchanged
+(the worker is throttled too, and still does its part in 14–38 ms); the rest is React
+re-render + paint of the grid and both charts at a quarter of the CPU, and the two slowest
+steps are the ones that also close a popup (month Select, agency popover). The
+next measured change is on the main thread, not in the engine: `memo` on the two charts
+so a grid-only result does not redraw them, `startTransition` around the result commit,
+and the React Compiler. The number is published as measured; a laptop-only 200 ms claim
+would be the dishonest version.
 
 ## Engine micro-benchmark (Node, `pnpm perf:bench 2025`)
 
@@ -130,9 +150,9 @@ Lighthouse's slow 4G / 4× CPU preset):
 | Profile | | First /data request | Columns downloaded | Cold: first rows | Warm: first rows |
 | --- | --- | --- | --- | --- | --- |
 | Desktop, no throttling | before | 323 ms | 406 ms | 932 ms | 877 ms |
-| | **after** | **15 ms** | **346 ms** | **903 ms** | **862 ms** |
+| | **after** | **17 ms** | **350 ms** | **918 ms** | **878 ms** |
 | Mobile, 4× CPU slowdown, slow 4G | before | 3895 ms | 23805 ms | 24687 ms | 1859 ms |
-| | **after** | **178 ms** | **22270 ms** | **22880 ms** | **1449 ms** |
+| | **after** | **177 ms** | **22269 ms** | **23062 ms** | **1349 ms** |
 
 Before, the first data byte could not move until three waves of JavaScript had run
 (page chunk → dynamic dashboard chunk → worker) and the worker had fetched `manifest.json`
@@ -151,8 +171,8 @@ and `dict.json` one after the other. Three changes:
 3. **`dict.json` and `columns.bin.gz` download in parallel** (`Promise.all` after the
    manifest, which carries the byte total and the checksum).
 
-What the numbers say: the first data request moves from 323 ms to 15 ms on desktop and from
-3.9 s to 0.18 s on slow 4G, and the warm mobile load drops 22%. The cold mobile load drops
+What the numbers say: the first data request moves from 323 ms to 17 ms on desktop and from
+3.9 s to 0.18 s on slow 4G, and the warm mobile load drops 27%. The cold mobile load drops
 only 7%, because on a 1.6 Mbps link the 3.5 MB payload is the ceiling (~18 s of transfer),
 not the latency — the next step there is a smaller slice (lazy columns, or splitting the
 dictionaries by dimension), not more hints. Localhost desktop barely moves for the opposite
@@ -166,15 +186,22 @@ Lighthouse 13.5, production build on localhost, Playwright's Chromium, `pnpm per
 
 | Preset | Performance | Accessibility | Best practices | SEO | FCP | LCP | TBT | CLS | Speed Index |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Desktop | 100 | 100 | 100 | 100 | 0.2 s | 0.6 s | 40 ms | 0 | 0.7 s |
-| Mobile (4× CPU slowdown, slow 4G) | 90 | 100 | 100 | 100 | 0.9 s | 2.1 s | 370 ms | 0 | 1.9 s |
+| Desktop | 100 | 100 | 100 | 100 | 0.2 s | 0.6 s | 20 ms | 0 | 0.8 s |
+| Mobile (4× CPU slowdown, slow 4G) | 93 | 100 | 100 | 100 | 0.9 s | 2.1 s | 280 ms | 0 | 2.4 s |
 
 Total transfer 4.3 MB, of which 3.5 MB is the columnar slice and ~330 KB the gzipped
-dictionaries; the slice is fetched after first paint and does not block LCP (the headline
-tiles are static HTML). Mobile TBT (~370 ms) is hydration plus the one-off structured clone
-of the ~17k-entry dictionaries and the decode of the columns on the main thread after the
-worker finishes; it is the number to attack next (see README limitations). Mobile scores
-vary by a few points between runs (87–90 observed); desktop is stable.
+dictionaries; the slice does not block LCP (the headline tiles are static HTML). Mobile
+TBT (240–280 ms, down from ~370 ms before the data-delivery changes) is hydration plus the
+one-off structured clone of the ~17k-entry dictionaries and the decode of the columns on
+the main thread after the worker finishes; it is still the number to attack next (see
+README limitations). Mobile scores vary by a few points between runs (90–94 observed);
+desktop is stable.
+
+One knob was decided by this audit: with the data preloads at the default `as="fetch"`
+priority (High in Chrome) desktop LCP went from 0.6 s to 0.8 s and the score to 99 — the
+dictionary competed with the CSS and font the tiles need. All three preloads are
+`fetchpriority="low"`, which keeps LCP at 0.6 s and still issues the first data request at
+~15 ms (`pnpm perf:load`).
 <!-- lighthouse:end -->
 
 ## Reproduce

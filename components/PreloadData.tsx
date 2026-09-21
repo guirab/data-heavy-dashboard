@@ -12,8 +12,9 @@ import { dataUrl, YEAR_FILES } from '@/lib/data/urls'
  */
 export function PreloadData({ year, version }: { year: number; version: string }) {
   for (const file of YEAR_FILES) {
-    // The 3.5 MB columns file must not starve the JS chunks on a slow link.
-    preload(dataUrl(year, file, version), { as: 'fetch', crossOrigin: 'anonymous', fetchPriority: file === 'columns.bin.gz' ? 'low' : 'auto' })
+    // Low priority for all three: as=fetch preloads default to High and would compete with the
+    // CSS and font the LCP tiles need; low still starts them with the HTML parse.
+    preload(dataUrl(year, file, version), { as: 'fetch', crossOrigin: 'anonymous', fetchPriority: 'low' })
   }
   return null
 }

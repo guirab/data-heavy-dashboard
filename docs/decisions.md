@@ -104,3 +104,32 @@ budget line over time) were not built, and why uPlot (canvas) is the named fallb
 (`?mode=naive`, `?mode=naive&virtual=1`, `?engine=comparator`). Every optimization was
 applied on top of the previous one and re-measured with the same Playwright script, so
 the before/after table in `docs/perf.md` is reproducible, not remembered.
+
+## 7. Form controls — shadcn (Base UI) instead of native elements
+
+**Decision.** Every form control is a shadcn/Base UI component: `Select` for the year and
+the month range, `Checkbox` inside the per-dimension popover, `Input` for both search boxes,
+`Separator` inside the popover. The first version used native `<select>`s and
+`<input type="checkbox">` styled by hand while these components sat installed and unused;
+once the rest of the UI was on the library, the mismatch in focus rings, dark tokens and
+sizing was the wrong kind of inconsistency to explain. The ARIA patterns now come from
+the library (`combobox` → `listbox`/`option`, `checkbox` with a wrapping label) and
+keyboard parity with the native elements is enforced by `e2e/filters.spec.ts`, which
+presses real keys and runs axe with each popup open.
+
+**Cost, measured.** +24.4 KB gzipped over the client chunks (+5.6%), all in the dynamic
+dashboard chunk — the first load of `/` is unchanged. On touch devices the year and month
+pickers are the library popup, not the OS wheel. Two things the swap surfaced: Base UI's
+listbox has no accessible name (axe `aria-input-field-name`, serious, with the popup open),
+fixed in `components/ui/select.tsx` by forwarding `aria-label` to the list; and the option
+group was a `<ul role="group">` whose `<li>`s axe reports as orphaned — it is a `div`
+group now. The perf harness used Playwright's `selectOption()`, which only exists for a
+native `<select>`.
+
+**Alternatives.** *Keep the native elements* — zero bytes and the OS picker on mobile; for
+three years and twelve months that is objectively the lighter choice, and it lost to
+design-system consistency, which is the argument a team would make too. *Tooltip* —
+removed rather than adopted: Base UI's Tooltip renders no `role="tooltip"` /
+`aria-describedby` by design (a visual label only), so it cannot replace the `title`
+descriptions on grid cells and the stale badge without hiding them from screen readers;
+the one fitting use (visual labels on the `%`/`R$` metric toggles) is deferred.

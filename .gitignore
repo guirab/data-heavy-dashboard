@@ -48,3 +48,6 @@ next-env.d.ts
 # AI agent instruction files (local only)
 CLAUDE.md
 AGENTS.md
+
+# Claude Code agents and local settings
+.claude/

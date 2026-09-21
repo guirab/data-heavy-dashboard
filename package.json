@@ -2,6 +2,9 @@
   "name": "data-heavy-dashboard",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "type": "module",
   "scripts": {
     "dev": "next dev",
@@ -19,6 +22,7 @@
     "perf:measure": "node scripts/perf/measure.ts",
     "perf:load": "node scripts/perf/load.ts",
     "readme:perf": "node scripts/readme/perf-table.ts",
+    "readme:screenshot": "node scripts/readme/screenshot.ts",
     "perf:bench": "node scripts/perf/engine-bench.ts",
     "perf:chart": "node scripts/perf/chart-stress.mjs",
     "perf:lighthouse": "node scripts/perf/lighthouse.mjs"

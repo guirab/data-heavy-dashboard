@@ -1,6 +1,8 @@
 # Federal spending gap — commitments vs. payments
 
-**Live demo:** _deploy pending — see [Deploying](#deploying)_ · **Experiment:** `/experiments/chart-stress` · **Baseline:** `/?mode=naive`
+**Live demo:** https://data-heavy-dashboard.vercel.app · **Experiment:** `/experiments/chart-stress` · **Baseline:** `/?mode=naive`
+
+![Dashboard: agencies ranked by unpaid commitments, the cumulative committed-vs-paid chart, and the 328k-line budget grid](docs/screenshot.png)
 
 ## What question this answers
 
@@ -158,15 +160,15 @@ written by `scripts/perf/measure.ts` (Playwright over a production build) and co
 by `pnpm readme:perf`:
 
 <!-- perf:start -->
-Measured 2026-09-19 on Intel(R) Core(TM) Ultra 7 165U, 33 GB RAM, headless Chromium via Playwright, production build served locally (`next start`). 5 runs per cell; values are medians of interaction → next painted frame, in ms. Engine = filter+sort time alone (worker or main thread). JS heap is the main thread's (`Performance.getMetrics`); in modes C/D the ~22 MB slice also lives in the worker, which is not counted here.
+Measured 2026-09-20 on Intel(R) Core(TM) Ultra 7 165U, 33 GB RAM, headless Chromium via Playwright, production build served locally (`next start`). Profile: Desktop, no throttling. 5 runs per cell; values are medians of interaction → next painted frame, in ms. Engine = filter+sort time alone (worker or main thread).
 
 | Mode | Load → first rows | JS heap after load | sort by Paid | search "universidade" | clear search | months jun–dez | filter agency (Educação) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| A · naive, plain table, 10k rows in DOM | 3326 ms | 127 MB | **2974** (engine 188) | **2916** (engine 635) | **2446** (engine 193) | **1673** (engine 121) | **2286** (engine 44) |
-| A · naive, plain table, 50k rows in DOM | 14154 ms | 276 MB | **18792** (engine 213) | **16420** (engine 630) | **13251** (engine 216) | **8955** (engine 132) | **15234** (engine 47) |
-| B · naive compute, virtualized rows (all rows) | 879 ms | 91 MB | **214** (engine 189) | **614** (engine 601) | **197** (engine 172) | **133** (engine 114) | **73** (engine 43) |
-| C · worker + typed arrays + virtualized grid, comparator sort (all rows) | 907 ms | 27 MB | **148** (engine 77) | **97** (engine 32) | **144** (engine 79) | **124** (engine 51) | **96** (engine 28) |
-| D · C + radix sort in the worker (all rows) — shipped | 906 ms | 28 MB | **94** (engine 30) | **77** (engine 16) | **96** (engine 41) | **87** (engine 19) | **91** (engine 19) |
+| A · naive, plain table, 10k rows in DOM | 3261 ms | 128 MB | **2792** (engine 187) | **2856** (engine 640) | **2482** (engine 188) | **1728** (engine 121) | **2213** (engine 52) |
+| A · naive, plain table, 50k rows in DOM | 13931 ms | 277 MB | **18488** (engine 207) | **15022** (engine 615) | **13099** (engine 185) | **9547** (engine 127) | **14376** (engine 48) |
+| B · naive compute, virtualized rows (all rows) | 882 ms | 92 MB | **213** (engine 188) | **624** (engine 610) | **198** (engine 173) | **137** (engine 112) | **63** (engine 43) |
+| C · worker + typed arrays + virtualized grid, comparator sort (all rows) | 909 ms | 35 MB | **149** (engine 79) | **107** (engine 31) | **143** (engine 73) | **133** (engine 52) | **112** (engine 27) |
+| D · C + radix sort in the worker (all rows) — shipped | 902 ms | 35 MB | **103** (engine 34) | **83** (engine 17) | **105** (engine 33) | **103** (engine 23) | **103** (engine 26) |
 
 Row counts after each step (mode D): sort by Paid → 315,755; search "universidade" → 76,498; clear search → 315,755; months jun–dez → 195,852; filter agency (Educação) → 80,203.
 <!-- perf:end -->
@@ -202,16 +204,23 @@ named replacement if it ever is.
 **Data delivery.** The three data files are `<link rel="preload">`ed from the prerendered
 `<head>` and served under content-hashed `?v=` URLs with `Cache-Control: immutable`, and
 the dictionary and columns download in parallel. Measured with `pnpm perf:load` (cold cache,
-medians of 3): the first data request leaves at **15 ms** instead of 323 ms on desktop and
-at **0.18 s** instead of 3.9 s on slow 4G; a warm mobile load drops from 1.86 s to 1.45 s.
-The cold slow-4G load only improves 7% (24.7 → 22.9 s) because the 3.5 MB slice is the
+medians of 3): the first data request leaves at **17 ms** instead of 323 ms on desktop and
+at **0.18 s** instead of 3.9 s on slow 4G; a warm mobile load drops from 1.86 s to 1.35 s.
+The cold slow-4G load only improves 7% (24.7 → 23.1 s) because the 3.5 MB slice is the
 ceiling there, not the latency — see [docs/perf.md](docs/perf.md#data-delivery).
 
 **Lighthouse** (13.5, production build, localhost, `pnpm perf:lighthouse`, reports in
 `docs/lighthouse-*.json`): desktop **100 / 100 / 100 / 100** (FCP 0.2 s, LCP 0.6 s,
-TBT 40 ms, CLS 0); mobile preset **90** performance (LCP 2.1 s, TBT 370 ms; 87–90 across
-runs) with 100 on the other three. The 3.5 MB slice loads after first paint and does not
-block LCP because the headline tiles are static HTML. Details in [docs/perf.md](docs/perf.md#lighthouse).
+TBT 20 ms, CLS 0); mobile preset **93** performance (LCP 2.1 s, TBT 280 ms; 90–94 across
+runs) with 100 on the other three. The 3.5 MB slice does not block LCP because the headline
+tiles are static HTML. Details in [docs/perf.md](docs/perf.md#lighthouse).
+
+**On the mobile profile the interactions miss the budget.** The same harness under 4× CPU
+slowdown and slow 4G measures **245–425 ms** per interaction in mode D (engine still
+14–38 ms; the rest is re-render + paint at a quarter of the CPU, worst when a popup closes at
+the same time). The 200 ms claim above is a laptop number; the mobile one is published in
+[docs/perf.md](docs/perf.md#the-same-interactions-on-the-mobile-profile) with the next
+change named (memoized charts, `startTransition`, React Compiler).
 
 ## Accessibility
 
@@ -224,8 +233,13 @@ block LCP because the headline tiles are static HTML. Details in [docs/perf.md](
   The chart SVGs themselves are inert to the keyboard (Recharts' accessibility layer is off:
   it would add a focusable, unnamed `role="application"` inside the figure, which axe does
   not flag but a screen-reader user would hit); the table view is the keyboard/SR path.
-- Filters are native `<select>`s and checkboxes inside a popover; no custom widget stands
-  between the keyboard and the state.
+- Filters are shadcn/Base UI controls — `Select` for year and month range, `Checkbox` per
+  entry inside a popover, `Input` for both search boxes — so they get the ARIA
+  combobox/listbox and checkbox patterns from the library. Keyboard parity with the native
+  elements they replaced is asserted with real key presses in `e2e/filters.spec.ts`
+  (open with Enter/Space/arrows, Escape cancels without committing, focus returns to the
+  trigger), with axe run while each popup is open. Trade-off and cost in
+  [docs/decisions.md §7](docs/decisions.md#7-form-controls--shadcn-base-ui-instead-of-native-elements).
 - `e2e/a11y.spec.ts` runs axe (WCAG 2.1 AA + best practices) over the **ready, loading, error
   (network and checksum), empty-filter, partial-data and stale-data** states and a
   keyboard-only walkthrough. Bar: no critical or serious violations; the suite currently
@@ -270,10 +284,32 @@ block LCP because the headline tiles are static HTML. Details in [docs/perf.md](
   download page — see The data.
 - **The radix sort assumes integer keys**; a future float measure would need the
   comparator path (still present) or a float-to-sortable-int transform.
-- **Mobile TBT is 380 ms** on Lighthouse's throttled profile: after the worker finishes, the
+- **On a slow link the payload is the ceiling.** Preloading and immutable caching moved
+  the first data request from 3.9 s to 0.18 s on slow 4G, but a cold load there still takes
+  ~23 s because 3.5 MB at 1.6 Mbps is ~18 s of transfer. The next measured step is a
+  smaller first slice — lazy columns, or dictionaries split by dimension — not more hints.
+- **Mobile TBT is 240–280 ms** on Lighthouse's throttled profile: after the worker finishes, the
   main thread still clones ~17k dictionary entries and decodes the columns for cell reads.
   Sending the dictionaries as a shared buffer, or decoding lazily per visible column, is the
   next measured change.
+
+## How to verify in 5 minutes
+
+1. Open the [live demo](https://data-heavy-dashboard.vercel.app): the headline tiles are in
+   the HTML, then a progress bar, then the grid. Add `?perf=1` to see per-interaction
+   timings (engine / commit / paint) in an overlay.
+2. Sort by **Paid**, type `universidade` in the search box, pick **Agency → Ministério da
+   Educação**: each should land well under 200 ms on a laptop.
+3. Open `/?mode=naive&rows=10000` to feel the baseline the numbers above are measured
+   against (`&rows=50000` if you are patient).
+4. Keyboard only: Tab to the grid (focus lands on the active cell), arrows / Page Up-Down /
+   Ctrl+Home-End move, Shift+Tab walks out through the sortable headers. Open **Year** with
+   Space or ArrowDown, Escape cancels, Enter commits.
+5. Break it: `/?sort=nope:asc` falls back to the default sort and the URL heals; throttle the
+   network in DevTools and reload to see the loading state; block `columns.bin.gz` to see
+   the network error and its Retry (fresh worker, cache bypass).
+6. Click **View as table** on either chart: every chart has a table twin.
+7. `pnpm e2e` runs the axe + keyboard suite (13 tests) against a production build.
 
 ## Running locally
 
@@ -292,9 +328,30 @@ download and the determinism check.
 
 ## Deploying
 
-Vercel, zero configuration: the artifacts under `public/data/` are committed and served as
-static files, and the page is prerendered. Push the repo, import it in Vercel, done. The
-`data-determinism` CI job re-downloads the sources and rebuilds on every push so the
+Vercel, no build configuration: the artifacts under `public/data/` are committed and served
+as static files, and the page is prerendered. Node is pinned to 24 (`engines`, `.nvmrc`; CI
+uses the same). Two environment variables on the project:
+
+- `NEXT_PUBLIC_SITE_URL` = the deployment's origin, for `metadataBase` (canonical, `og:url`).
+- `ENABLE_EXPERIMENTAL_COREPACK=1`, so Vercel honours `packageManager: pnpm@11`.
+
+```bash
+pnpm dlx vercel@latest login && pnpm dlx vercel link
+pnpm dlx vercel env add NEXT_PUBLIC_SITE_URL production
+pnpm dlx vercel env add ENABLE_EXPERIMENTAL_COREPACK production
+pnpm dlx vercel --prod
+```
+
+After the first deploy, check that the headers from `next.config.ts` survived the platform:
+
+```bash
+curl -sI https://<url>/ | grep -iE 'content-security|x-content-type'
+v=$(curl -s https://<url>/ | grep -o 'columns.bin.gz?v=[0-9a-f]*' | head -1 | cut -d= -f2)
+curl -sI "https://<url>/data/v1/2025/columns.bin.gz?v=$v" | grep -iE 'cache-control|content-encoding|content-type'
+# expected: cache-control: public, max-age=31536000, immutable · application/gzip · no content-encoding
+```
+
+The `data-determinism` CI job re-downloads the sources and rebuilds on every push so the
 committed artifacts never drift from the code.
 
 ## Project structure
@@ -307,12 +364,12 @@ lib/data/               columnar codec, loader (progress + SHA-256 + inflate), e
 lib/filters/            URL <-> filter state
 lib/perf.ts             interaction -> commit -> paint marks
 scripts/pipeline/       00-download … 05-emit, rules/DEF-*.ts, verify (determinism)
-scripts/perf/           measure.ts (Playwright), engine-bench.ts
-scripts/readme/         defects-table.ts, perf-table.ts
+scripts/perf/           measure.ts (interactions), load.ts (cold/warm load), profile.ts (device throttling), engine-bench.ts, lighthouse.mjs
+scripts/readme/         defects-table.ts, perf-table.ts, screenshot.ts
 schema/                 raw header (typo included), órgão superior name overrides
 data/manifest.json      what was downloaded (URL, bytes, Last-Modified, sha256); raw zips are git-ignored
 public/data/v1/         generated artifacts per year + defects-report.json + index.json
-docs/                   sources.md, decisions.md, perf.md, perf-results.md
+docs/                   sources.md, decisions.md, perf.md, perf-results.md, perf-load.md, lighthouse.md
 e2e/                    axe + keyboard suite over the five states
 ```
 

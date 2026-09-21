@@ -1,10 +1,10 @@
 {
   "preset": "mobile",
   "lighthouseVersion": "13.5.0",
-  "fetchTime": "2026-09-20T01:32:17.829Z",
-  "url": "http://localhost:3000/",
+  "fetchTime": "2026-09-20T23:58:12.202Z",
+  "url": "http://localhost:3100/",
   "scores": {
-    "performance": 90,
+    "performance": 93,
     "accessibility": 100,
     "best-practices": 100,
     "seo": 100,
@@ -12,19 +12,19 @@
   },
   "audits": {
     "first-contentful-paint": {
-      "value": 906.1013,
+      "value": 907.1572000000001,
       "display": "0.9 s",
       "score": 1
     },
     "largest-contentful-paint": {
-      "value": 2106.1013,
+      "value": 2107.1572,
       "display": "2.1 s",
       "score": 0.96
     },
     "total-blocking-time": {
-      "value": 371,
-      "display": "370 ms",
-      "score": 0.71
+      "value": 278.5,
+      "display": "280 ms",
+      "score": 0.81
     },
     "cumulative-layout-shift": {
       "value": 0,
@@ -32,18 +32,18 @@
       "score": 1
     },
     "speed-index": {
-      "value": 1907.7456618875442,
-      "display": "1.9 s",
-      "score": 1
+      "value": 2394.071722068131,
+      "display": "2.4 s",
+      "score": 0.98
     },
     "interactive": {
-      "value": 4640.9526000000005,
-      "display": "4.6 s",
-      "score": 0.81
+      "value": 5667.8644,
+      "display": "5.7 s",
+      "score": 0.68
     },
     "total-byte-weight": {
-      "value": 4377378,
-      "display": "Total size was 4,275 KiB",
+      "value": 4407442,
+      "display": "Total size was 4,304 KiB",
       "score": 0.5
     },
     "server-response-time": {

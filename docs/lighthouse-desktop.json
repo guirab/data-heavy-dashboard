@@ -1,8 +1,8 @@
 {
   "preset": "desktop",
   "lighthouseVersion": "13.5.0",
-  "fetchTime": "2026-09-20T01:32:06.210Z",
-  "url": "http://localhost:3000/",
+  "fetchTime": "2026-09-20T23:58:00.499Z",
+  "url": "http://localhost:3100/",
   "scores": {
     "performance": 100,
     "accessibility": 100,
@@ -12,18 +12,18 @@
   },
   "audits": {
     "first-contentful-paint": {
-      "value": 246.7269,
+      "value": 249.1517,
       "display": "0.2 s",
       "score": 1
     },
     "largest-contentful-paint": {
-      "value": 589.7269,
+      "value": 610.1517000000001,
       "display": "0.6 s",
-      "score": 1
+      "score": 0.99
     },
     "total-blocking-time": {
-      "value": 38,
-      "display": "40 ms",
+      "value": 17.5,
+      "display": "20 ms",
       "score": 1
     },
     "cumulative-layout-shift": {
@@ -32,18 +32,18 @@
       "score": 1
     },
     "speed-index": {
-      "value": 661.3778062051724,
-      "display": "0.7 s",
-      "score": 1
+      "value": 760.6400316095181,
+      "display": "0.8 s",
+      "score": 0.99
     },
     "interactive": {
-      "value": 976.4538000000001,
-      "display": "1.0 s",
+      "value": 1151.3034000000002,
+      "display": "1.2 s",
       "score": 1
     },
     "total-byte-weight": {
-      "value": 4377378,
-      "display": "Total size was 4,275 KiB",
+      "value": 4407442,
+      "display": "Total size was 4,304 KiB",
       "score": 0.5
     },
     "server-response-time": {
